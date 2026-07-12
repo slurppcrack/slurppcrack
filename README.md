@@ -1,16 +1,25 @@
-## Hi there 👋
+# Привет, я slurppcrack 👋
 
-<!--
-**slurppcrack/slurppcrack** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Я самоучка. Пишу на C++, C#, Python  
+Интересуюсь кибербезопасностью, системным программированием и созданием своих инструментов.
 
-Here are some ideas to get you started:
+---
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## 🛠️ Навыки
+
+- C++ / C#
+- Python
+- Linux (Kali)
+- Git / GitHub
+
+---
+
+## 📌 Проекты
+
+- [BIO-slurpp](https://github.com/slurppcrack/BIO-slurpp) — мой BIO
+
+---
+
+## 📫 Связаться
+
+- Telegram: @slurppshun
