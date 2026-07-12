@@ -11,6 +11,7 @@
 - Python
 - Linux (Kali)
 - Git / GitHub
+- HTML / CSS
 
 ---
 
