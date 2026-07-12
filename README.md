@@ -12,7 +12,13 @@
 - Linux (Kali)
 - Git / GitHub
 - HTML / CSS
-
+  
+---
+## 🧑‍🎓 В глубоком изучении
+- C / PY
+- Cybersecurity
+- Kali Linux
+  
 ---
 
 ## 🌈 Цели, мечты
