@@ -1,6 +1,6 @@
 # Привет, я slurpp 👋
 
-Я самоучка. Пишу на C++, C#, Python, 
+Я самоучка. Пишу на C++, C#, Python, HTML, CSS.  
 Интересуюсь кибербезопасностью, системным программированием и созданием своих инструментов.
 
 ---
@@ -19,7 +19,7 @@
 
 ---
 ## 📌 Проекты
-
+- [jdsteam.github.io(https://github.com/slurppcrack/jdsteam.github.io) - сайт команды по КС2
 - [BIO-slurpp](https://github.com/slurppcrack/BIO-slurpp) — мой BIO
 
 ---
