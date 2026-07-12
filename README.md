@@ -19,8 +19,9 @@
 
 ---
 ## 📌 Проекты
-- [jdsteam.github.io(https://github.com/slurppcrack/jdsteam.github.io) - сайт команды по КС2
+- [jdsteam.github.io](https://github.com/slurppcrack/jdsteam.github.io) - сайт команды по КС2
 - [BIO-slurpp](https://github.com/slurppcrack/BIO-slurpp) — мой BIO
+- [souro-bio](https://github.com/slurppcrack/souro-bio) - еще одно БИО
 
 ---
 
