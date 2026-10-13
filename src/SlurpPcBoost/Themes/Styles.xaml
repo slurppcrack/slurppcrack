@@ -287,7 +287,8 @@
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.AccentSoft}" />
                             <Setter Property="Foreground" Value="{StaticResource Brush.Accent}" />
-                            <Setter TargetName="Label" Property="FontWeight" Value="Bold" />
+                            <!-- FontWeight задаём самой кнопке: он наследуется в текст внутри ContentPresenter -->
+                            <Setter Property="FontWeight" Value="Bold" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
