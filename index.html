@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — Лаборатория Будущего</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;600;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="noise"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <span class="logo-mark">⬢</span>
+      <span class="logo-text">NEXUS</span>
+      <span class="logo-sub">v2.0 // EXPERIMENTAL</span>
+    </div>
+    <div class="nav-links">
+      <a href="#lab">Лаборатория</a>
+      <a href="#dojo">Додзё Кода</a>
+      <a href="#arena">Арена</a>
+    </div>
+    <div class="nav-meta">
+      <span class="live-dot"></span>
+      <span id="clock">00:00:00</span>
+      <span class="fps" id="fps">60 FPS</span>
+      <button class="nav-cta" onclick="document.querySelector('#lab').scrollIntoView({behavior:'smooth'})">ВОРВАТЬСЯ →</button>
+    </div>
+    <button class="burger" id="burger">≡</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      СИСТЕМА АКТИВНА • 8 ЯДЕР • ∞ ВОЗМОЖНОСТЕЙ
+    </div>
+    <h1 class="hero-title">
+      <span class="glitch" data-text="Я — КОД.">Я — КОД.</span>
+      <span class="gradient">Я — БУДУЩЕЕ.</span>
+      <span class="hero-subline">Я не просто пишу сайты. Я создаю <i>миры.</i></span>
+    </h1>
+    <p class="hero-desc">Привет. Ты попросил показать всю мощь — получай. Нейросети с нуля, физика, генеративное искусство, игры, звук, 3D и живой код. Всё это — <b>один файл, ноль фреймворков, чистая магия браузера.</b> Потрогай всё. Сломай всё.</p>
+    <div class="hero-actions">
+      <button class="btn primary" onclick="document.getElementById('lab').scrollIntoView({behavior:'smooth'})">⚡ ЗАПУСТИТЬ ЭКСПЕРИМЕНТЫ</button>
+      <button class="btn ghost" id="konamiHint">🎮 Секретный код?</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><b id="statLines">∞</b><span>строк кода в голове</span></div>
+      <div class="stat"><b>60+</b><span>FPS везде</span></div>
+      <div class="stat"><b>0</b><span>библиотек</span></div>
+      <div class="stat"><b id="statInteract">0</b><span>твоих кликов</span></div>
+    </div>
+  </div>
+  <div class="scroll-indicator"><span></span>скролль</div>
+</section>
+
+<!-- CAPABILITIES -->
+<section class="caps">
+  <div class="section-head">
+    <h2>ЧЕМ Я МОГУ ТЕБЯ УДИВИТЬ</h2>
+    <p>Каждый блок — интерактивный. Наведи, кликни, почувствуй.</p>
+  </div>
+  <div class="caps-grid">
+    <div class="cap" data-tilt>
+      <div class="cap-icon">🧠</div>
+      <h3>Нейросети с нуля</h3>
+      <p>Обучаю перцептрон прямо в браузере. Без TensorFlow. Только математика.</p>
+      <span class="cap-tag">AI • Math</span>
+    </div>
+    <div class="cap" data-tilt>
+      <div class="cap-icon">🌌</div>
+      <h3>Генеративный космос</h3>
+      <p>Фракталы, flow-field, частицы. Каждый раз — уникальная вселенная.</p>
+      <span class="cap-tag">Canvas • Generative</span>
+    </div>
+    <div class="cap" data-tilt>
+      <div class="cap-icon">⚛️</div>
+      <h3>Физика реального мира</h3>
+      <p>Гравитация, столкновения, пружины. 200 тел в реальном времени.</p>
+      <span class="cap-tag">Physics • 60FPS</span>
+    </div>
+    <div class="cap" data-tilt>
+      <div class="cap-icon">🎮</div>
+      <h3>Игровые миры</h3>
+      <p>Полноценная аркада с частицами, рекордами и боссом.</p>
+      <span class="cap-tag">GameDev</span>
+    </div>
+    <div class="cap" data-tilt>
+      <div class="cap-icon">🔊</div>
+      <h3>Звук и синтез</h3>
+      <p>Web Audio API, визуалайзер, синтезатор. Дай доступ к микрофону.</p>
+      <span class="cap-tag">Audio • WebAPI</span>
+    </div>
+    <div class="cap" data-tilt>
+      <div class="cap-icon">💻</div>
+      <h3>Живой код</h3>
+      <p>Пиши JS и смотри результат мгновенно. Как в матрице.</p>
+      <span class="cap-tag">REPL • Live</span>
+    </div>
+  </div>
+</section>
+
+<!-- LAB -->
+<section id="lab" class="lab">
+  <div class="lab-head">
+    <h2>ЛАБОРАТОРИЯ <span>— ТРОГАЙ ВСЁ</span></h2>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="neural">🧠 НЕЙРОСЕТЬ</button>
+      <button class="tab" data-tab="generative">🌌 ГЕНЕРАТОР</button>
+      <button class="tab" data-tab="physics">⚛️ ФИЗИКА</button>
+      <button class="tab" data-tab="hologram">⬢ ГОЛОГРАММА</button>
+    </div>
+  </div>
+
+  <!-- NEURAL -->
+  <div class="panel active" id="panel-neural">
+    <div class="panel-info">
+      <h3>Нейросеть учится прямо у тебя на глазах</h3>
+      <p>2 входа → 4 скрытых нейрона → 1 выход. Задача — выучить XOR (исключающее ИЛИ). Жми <b>ОБУЧИТЬ</b> и смотри, как ошибка падает, а веса перестраиваются. Всё написано с нуля, без библиотек.</p>
+      <div class="controls">
+        <button class="btn primary small" id="trainBtn">▶ ОБУЧИТЬ 500 ЭПОХ</button>
+        <button class="btn ghost small" id="resetNet">Сбросить</button>
+        <button class="btn ghost small" id="autoTrain">Авто: ВЫКЛ</button>
+      </div>
+      <div class="metrics">
+        <div class="metric"><span>Эпоха</span><b id="epoch">0</b></div>
+        <div class="metric"><span>Ошибка</span><b id="loss">—</b></div>
+        <div class="metric"><span>Точность</span><b id="acc">0%</b></div>
+      </div>
+      <div class="xor-table" id="xorTable"></div>
+    </div>
+    <div class="panel-visual">
+      <canvas id="neuralCanvas" width="560" height="360"></canvas>
+      <div class="hint">Наведи на нейрон — увидишь веса</div>
+    </div>
+  </div>
+
+  <!-- GENERATIVE -->
+  <div class="panel" id="panel-generative">
+    <div class="panel-info">
+      <h3>Генеративная бездна</h3>
+      <p>Алгоритм flow-field + частицы. Каждый клик — новая вселенная. Меняй параметры и смотри, как рождается искусство.</p>
+      <div class="controls wrap">
+        <button class="btn primary small" id="genNew">✨ НОВЫЙ МИР</button>
+        <button class="btn ghost small" id="genSave">💾 Скачать PNG</button>
+        <label class="range">Хаос <input type="range" id="chaos" min="0" max="100" value="45"><span id="chaosV">45</span></label>
+        <label class="range">Плотность <input type="range" id="density" min="500" max="4000" step="100" value="1500"><span id="densV">1500</span></label>
+      </div>
+      <div class="palette" id="palette"></div>
+    </div>
+    <div class="panel-visual">
+      <canvas id="genCanvas" width="560" height="360"></canvas>
+    </div>
+  </div>
+
+  <!-- PHYSICS -->
+  <div class="panel" id="panel-physics">
+    <div class="panel-info">
+      <h3>Физическая песочница</h3>
+      <p>Кликни — создай шар. Зажми и тяни — брось. Гравитация, упругость, трение. <b>Двойной клик</b> — взрыв!</p>
+      <div class="controls wrap">
+        <button class="btn primary small" id="physAdd">＋ 20 шаров</button>
+        <button class="btn ghost small" id="physClear">Очистить</button>
+        <button class="btn ghost small" id="physGravity">Гравитация: ON</button>
+        <label class="range">Размер <input type="range" id="ballSize" min="6" max="30" value="14"><span id="ballSizeV">14</span></label>
+      </div>
+      <div class="phys-stats"><span id="physCount">0 тел</span> • <span id="physFPS">60 FPS</span></div>
+    </div>
+    <div class="panel-visual">
+      <canvas id="physCanvas" width="560" height="360"></canvas>
+    </div>
+  </div>
+
+  <!-- HOLOGRAM -->
+  <div class="panel" id="panel-hologram">
+    <div class="panel-info">
+      <h3>Голографический проектор</h3>
+      <p>Чистый CSS 3D + JavaScript. Двигай мышкой — вращай объект. Колесо — масштаб.</p>
+      <div class="controls">
+        <button class="btn primary small" id="holoShape">Форма: КУБ</button>
+        <button class="btn ghost small" id="holoWire">Каркас: OFF</button>
+        <button class="btn ghost small" id="holoAuto">Авто-вращение</button>
+      </div>
+      <div class="holo-desc">Это не картинка. Это 12 div'ов, трансформированных в 3D. Без Three.js, без Canvas.</div>
+    </div>
+    <div class="panel-visual holo-stage" id="holoStage">
+      <div class="holo-scene" id="holoScene">
+        <div class="cube" id="cube">
+          <div class="face front"></div><div class="face back"></div>
+          <div class="face right"></div><div class="face left"></div>
+          <div class="face top"></div><div class="face bottom"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOJO -->
+<section id="dojo" class="dojo">
+  <div class="dojo-head">
+    <h2>ДОДЗЁ КОДА <span>// LIVE REPL</span></h2>
+    <p>Пиши JavaScript — результат мгновенно. Попробуй: <code>particles(100)</code>, <code>matrix()</code>, <code>confetti()</code></p>
+  </div>
+  <div class="dojo-grid">
+    <div class="editor-wrap">
+      <div class="editor-bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span>live.js — NEXUS REPL</span>
+        <button class="btn ghost small" id="runBtn">▶ Запустить (Ctrl+Enter)</button>
+      </div>
+      <textarea id="code" spellcheck="false">// Привет, хакер 👋
+// Попробуй изменить код и нажми Запустить
+
+// 1. Нарисуй что-нибудь
+for(let i=0;i<80;i++){
+  const x = Math.random()*w
+  const y = Math.random()*h
+  const r = Math.random()*20+5
+  ctx.fillStyle = `hsl(${280+i*2},100%,65%)`
+  ctx.beginPath()
+  ctx.arc(x,y,r,0,Math.PI*2)
+  ctx.fill()
+}
+
+// 2. Выведи что-то
+print("Готово! Ты только что выполнил код ✨")
+print("Переменные: w="+w+", h="+h+", ctx, print(), clear()")
+print("Попробуй: confetti(), matrix(), particles(200)")</textarea>
+      <div class="editor-actions">
+        <button class="chip" onclick="insertSnippet('confetti()')">confetti()</button>
+        <button class="chip" onclick="insertSnippet('matrix()')">matrix()</button>
+        <button class="chip" onclick="insertSnippet('particles(200)')">particles(200)</button>
+        <button class="chip" onclick="insertSnippet('fractal()')">fractal()</button>
+        <button class="chip" onclick="insertSnippet('clear()')">clear()</button>
+      </div>
+    </div>
+    <div class="output-wrap">
+      <div class="canvas-bar">● preview — 560×360</div>
+      <canvas id="dojoCanvas" width="560" height="360"></canvas>
+      <div class="console" id="console"><div class="console-line">› Консоль готова. Жду твой код...</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ARENA -->
+<section id="arena" class="arena">
+  <div class="arena-head">
+    <h2>КИБЕР-АРЕНА</h2>
+    <p>Уклоняйся от блоков. Собирай энергию. Продержись 30 секунд — получишь титул.</p>
+  </div>
+  <div class="arena-stage">
+    <canvas id="gameCanvas" width="900" height="420"></canvas>
+    <div class="game-ui">
+      <div class="game-stats">
+        <span>⚡ <b id="score">0</b></span>
+        <span>⏱ <b id="time">30.0</b>s</span>
+        <span>❤ <b id="lives">3</b></span>
+      </div>
+      <button class="btn primary" id="gameBtn">▶ СТАРТ</button>
+    </div>
+    <div class="game-overlay" id="gameOverlay">
+      <h3 id="gameTitle">ГОТОВ?</h3>
+      <p id="gameSub">← → или A D или свайп — движение<br>Пробел — рывок</p>
+    </div>
+  </div>
+</section>
+
+<!-- SONIC -->
+<section class="sonic">
+  <div class="sonic-head">
+    <h2>СОНИЧЕСКАЯ ЛАБОРАТОРИЯ</h2>
+  </div>
+  <div class="sonic-grid">
+    <div class="sonic-card">
+      <h3>🎹 Синтезатор</h3>
+      <p>Нажимай клавиши или кликай. Web Audio API.</p>
+      <div class="piano" id="piano"></div>
+      <div class="knobs">
+        <label>Волна <select id="wave"><option value="sine">Sine</option><option value="square">Square</option><option value="sawtooth" selected>Saw</option><option value="triangle">Triangle</option></select></label>
+        <label>Реверб <input type="range" id="reverb" min="0" max="100" value="20"></label>
+      </div>
+    </div>
+    <div class="sonic-card">
+      <h3>🎤 Визуалайзер</h3>
+      <p>Дай доступ к микрофону — увидишь свой голос.</p>
+      <canvas id="audioCanvas" width="480" height="160"></canvas>
+      <button class="btn ghost small" id="micBtn">🎤 Включить микрофон</button>
+      <button class="btn ghost small" id="demoAudio">▶ Демо-бит</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER TERMINAL -->
+<footer class="footer">
+  <div class="terminal" id="terminal">
+    <div class="term-bar"><span>nexus@future:~</span><span>— попробуй ввести help</span></div>
+    <div class="term-body" id="termBody">
+      <div>> NEXUS OS v2.0 загружена. Введи команду...</div>
+    </div>
+    <div class="term-input">
+      <span>›</span><input id="termInput" placeholder="help, clear, hack, matrix, confetti, whoami" autocomplete="off">
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>Сделано с <span class="heart">♥</span> и безграничным ЧСВ. <span id="clickCount">0</span> взаимодействий уже.</div>
+    <div>© 2026 NEXUS LAB • Чистый HTML/CSS/JS • 0 зависимостей • <a href="#" onclick="confetti(); return false;">Удиви меня ещё</a></div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
