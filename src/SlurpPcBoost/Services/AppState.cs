@@ -344,7 +344,8 @@ public sealed class AppState : ObservableObject
 
             // Базовая оценка — «как есть» до оптимизаций (та же шкала, что у монитора FPS).
             _baselineFps = Math.Round((30 + (OptimizationEngine.BaselineScore * 270)) + _random.Next(-6, 7));
-            PotentialFps = Math.Round(30 + 270 + _random.Next(-8, 9));
+            // 30 + 270 = 300 FPS — максимум демо-шкалы (Score01 == 1.0)
+            PotentialFps = Math.Round(300.0 + _random.Next(-8, 9));
             _peakFps = Math.Max(_peakFps, _baselineFps);
             HasScanned = true;
 
