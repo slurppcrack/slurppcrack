@@ -282,7 +282,7 @@
                                 </Grid>
                                 <ProgressBar Margin="0,10,0,0"
                                              Style="{StaticResource Progress.Thin}"
-                                             Value="{Binding State.OptimizationPercent}" />
+                                             Value="{Binding State.OptimizationPercent, Mode=OneWay}" />
                             </StackPanel>
                         </Border>
                     </StackPanel>
