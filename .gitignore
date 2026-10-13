@@ -1,0 +1,38 @@
+## .NET / WPF
+bin/
+obj/
+publish/
+artifacts/
+*.binlog
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+
+## OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Logs
+*.log

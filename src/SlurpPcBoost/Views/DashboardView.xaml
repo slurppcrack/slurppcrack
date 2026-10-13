@@ -1,0 +1,516 @@
+<UserControl x:Class="SlurpPcBoost.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:conv="clr-namespace:SlurpPcBoost.Converters"
+             d:DesignHeight="760"
+             d:DesignWidth="1060"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisInvert" Invert="True" />
+        <conv:RingDashConverter x:Key="RingDash" />
+    </UserControl.Resources>
+
+    <ScrollViewer Padding="0,0,8,0"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+
+            <!-- ============================= ГЕРОЙ-БЛОК ============================= -->
+            <Border Style="{StaticResource Card}" Padding="28" Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <Border Background="{StaticResource Brush.AccentSoft}"
+                                    CornerRadius="9"
+                                    Padding="10,6"
+                                    Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Width="13"
+                                          Height="13"
+                                          Data="{StaticResource Icon.Alert}"
+                                          Fill="{StaticResource Brush.Accent}"
+                                          Stretch="Uniform"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Margin="7,0,0,0"
+                                               FontSize="10.5"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource Brush.Accent}"
+                                               Text="ДЕМО-РЕЖИМ" />
+                                </StackPanel>
+                            </Border>
+                            <Border Background="{StaticResource Brush.SurfaceAlt}"
+                                    BorderBrush="{StaticResource Brush.StrokeSoft}"
+                                    BorderThickness="1"
+                                    CornerRadius="9"
+                                    Padding="10,6">
+                                <TextBlock FontSize="10.5"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource Brush.TextMuted}"
+                                           Text="{Binding State.System.AppVersionText}" />
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock FontSize="30"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource Brush.Text}"
+                                   Text="Игровой профиль активен"
+                                   Visibility="{Binding State.HasAppliedTweaks, Converter={StaticResource BoolToVis}}" />
+                        <TextBlock FontSize="30"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource Brush.Text}"
+                                   Text="Система ещё не оптимизирована"
+                                   Visibility="{Binding State.HasAppliedTweaks, Converter={StaticResource BoolToVisInvert}}" />
+
+                        <TextBlock Style="{StaticResource Text.Body}"
+                                   Margin="0,10,0,0"
+                                   MaxWidth="560"
+                                   HorizontalAlignment="Left"
+                                   Text="{Binding State.System.DeviceSummary}" />
+
+                        <TextBlock Style="{StaticResource Text.Caption}"
+                                   Margin="0,4,0,0"
+                                   Text="{Binding UserLine}" />
+
+                        <StackPanel Orientation="Horizontal" Margin="0,18,0,20">
+                            <Border Style="{StaticResource Card.Flat}" Padding="12,8" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Style="{StaticResource Icon}"
+                                          Width="14"
+                                          Height="14"
+                                          Data="{StaticResource Icon.Bolt}"
+                                          Fill="{StaticResource Brush.Accent}" />
+                                    <TextBlock Margin="7,0,0,0"
+                                               FontSize="12.5"
+                                               Foreground="{StaticResource Brush.Text}">
+                                        <Run Text="Сейчас: " />
+                                        <Run FontWeight="Bold" Text="{Binding State.CurrentFps, Mode=OneWay}" />
+                                        <Run Text=" FPS" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card.Flat}" Padding="12,8" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Style="{StaticResource Icon}"
+                                          Width="14"
+                                          Height="14"
+                                          Data="{StaticResource Icon.Star}"
+                                          Fill="{StaticResource Brush.Yellow}" />
+                                    <TextBlock Margin="7,0,0,0"
+                                               FontSize="12.5"
+                                               Foreground="{StaticResource Brush.Text}">
+                                        <Run Text="Твики: " />
+                                        <Run FontWeight="Bold" Text="{Binding State.AppliedCountText, Mode=OneWay}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card.Flat}" Padding="12,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Style="{StaticResource Icon}"
+                                          Width="14"
+                                          Height="14"
+                                          Data="{StaticResource Icon.Gamepad}"
+                                          Fill="{StaticResource Brush.Green}" />
+                                    <TextBlock Margin="7,0,0,0"
+                                               FontSize="12.5"
+                                               Foreground="{StaticResource Brush.Text}"
+                                               Text="{Binding State.GameModeText}" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding ApplyRecommendedCommand}"
+                                    Content="Оптимизировать"
+                                    Style="{StaticResource Btn.Primary}"
+                                    ToolTip="Применить рекомендованный набор безопасных твиков" />
+                            <Button Command="{Binding ScanCommand}"
+                                    Margin="10,0,0,0"
+                                    Style="{StaticResource Btn.Ghost}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Style="{StaticResource Icon}"
+                                          Width="16"
+                                          Height="16"
+                                          Data="{StaticResource Icon.Scan}"
+                                          Fill="{StaticResource Brush.Accent}" />
+                                    <TextBlock Margin="9,0,0,0" FontWeight="SemiBold" Text="Сканировать" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding RevertAllCommand}"
+                                    Margin="10,0,0,0"
+                                    Style="{StaticResource Btn.Ghost}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Style="{StaticResource Icon}"
+                                          Width="16"
+                                          Height="16"
+                                          Data="{StaticResource Icon.Revert}"
+                                          Fill="{StaticResource Brush.TextMuted}" />
+                                    <TextBlock Margin="9,0,0,0" FontWeight="SemiBold" Text="Откатить всё" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,18,0,0"
+                                    Visibility="{Binding State.IsScanning, Converter={StaticResource BoolToVis}}">
+                            <ProgressBar Width="220"
+                                         Style="{StaticResource Progress.Thin}"
+                                         Value="{Binding State.ScanProgress}" />
+                            <TextBlock Style="{StaticResource Text.Caption}"
+                                       Margin="12,0,0,0"
+                                       VerticalAlignment="Center">
+                                <Run Text="Сканирование: " />
+                                <Run Text="{Binding State.ScanProgress, Mode=OneWay, StringFormat={}{0:0}}" />
+                                <Run Text="%" />
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Круговой индикатор оптимизации -->
+                    <StackPanel Grid.Column="1"
+                                Width="230"
+                                Margin="30,0,0,0"
+                                VerticalAlignment="Center">
+                        <Grid Width="168" Height="168" HorizontalAlignment="Center">
+                            <Ellipse Stroke="{StaticResource Brush.SurfaceHover}" StrokeThickness="11" />
+                            <Ellipse Stroke="{StaticResource Gradient.AccentHorizontal}"
+                                     StrokeDashArray="{Binding State.OptimizationPercent, Converter={StaticResource RingDash}, ConverterParameter=44.0}"
+                                     StrokeDashCap="Round"
+                                     StrokeThickness="11"
+                                     RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <RotateTransform Angle="-90" />
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock HorizontalAlignment="Center"
+                                           Style="{StaticResource Text.Metric}"
+                                           FontSize="34"
+                                           Text="{Binding State.OptimizationPercentText}" />
+                                <TextBlock HorizontalAlignment="Center"
+                                           Style="{StaticResource Text.Caption}"
+                                           Text="оптимизировано" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Style="{StaticResource Card.Flat}" Margin="0,18,0,0" Padding="14,12">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Text.Label}" Text="ПОТЕНЦИАЛ" />
+                                <TextBlock Margin="0,6,0,0"
+                                           FontFamily="{StaticResource Font.Numeric}"
+                                           FontSize="20"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource Brush.Accent}"
+                                           Text="{Binding State.MaxBoostText}" />
+                                <TextBlock Style="{StaticResource Text.Caption}"
+                                           Margin="0,4,0,0"
+                                           Text="{Binding State.ProgressSummary}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ============================= МЕТРИКИ ============================= -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Label}" Text="ТЕКУЩИЙ FPS" />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock Style="{StaticResource Text.Metric}"
+                                       Text="{Binding State.CurrentFps}" />
+                            <TextBlock Style="{StaticResource Text.Unit}" Text="FPS" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Text.Body}"
+                                   Margin="0,8,0,0"
+                                   Text="{Binding State.FpsStatusText}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Style="{StaticResource Text.Caption}">
+                                <Run Text="База: " />
+                                <Run FontWeight="SemiBold" Foreground="{StaticResource Brush.TextMuted}" Text="{Binding State.BaselineFps, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource Text.Caption}" Margin="14,0,0,0">
+                                <Run Text="Пик: " />
+                                <Run FontWeight="SemiBold" Foreground="{StaticResource Brush.TextMuted}" Text="{Binding State.PeakFps, Mode=OneWay}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="8,0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Label}" Text="ЗАГРУЗКА СИСТЕМЫ" />
+
+                        <Grid Margin="0,12,0,0">
+                            <TextBlock FontSize="12.5" Foreground="{StaticResource Brush.TextMuted}">
+                                <Run Text="CPU" />
+                            </TextBlock>
+                            <TextBlock HorizontalAlignment="Right"
+                                       FontFamily="{StaticResource Font.Numeric}"
+                                       FontSize="12.5"
+                                       Foreground="{StaticResource Brush.Text}"
+                                       Text="{Binding State.CpuLoadText}" />
+                        </Grid>
+                        <ProgressBar Margin="0,6,0,0"
+                                     Style="{StaticResource Progress.Thin}"
+                                     Value="{Binding State.CpuLoad}" />
+
+                        <Grid Margin="0,12,0,0">
+                            <TextBlock FontSize="12.5" Foreground="{StaticResource Brush.TextMuted}" Text="GPU" />
+                            <TextBlock HorizontalAlignment="Right"
+                                       FontFamily="{StaticResource Font.Numeric}"
+                                       FontSize="12.5"
+                                       Foreground="{StaticResource Brush.Text}"
+                                       Text="{Binding State.GpuLoadText}" />
+                        </Grid>
+                        <ProgressBar Margin="0,6,0,0"
+                                     Style="{StaticResource Progress.Thin}"
+                                     Value="{Binding State.GpuLoad}" />
+
+                        <Grid Margin="0,12,0,0">
+                            <TextBlock FontSize="12.5" Foreground="{StaticResource Brush.TextMuted}" Text="RAM" />
+                            <TextBlock HorizontalAlignment="Right"
+                                       FontFamily="{StaticResource Font.Numeric}"
+                                       FontSize="12.5"
+                                       Foreground="{StaticResource Brush.Text}"
+                                       Text="{Binding State.RamLoadText}" />
+                        </Grid>
+                        <ProgressBar Margin="0,6,0,0"
+                                     Style="{StaticResource Progress.Thin}"
+                                     Value="{Binding State.RamLoad}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource Card}" Margin="8,0,0,0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Label}" Text="КАЧЕСТВО ФРЕЙМТАЙМА" />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock Style="{StaticResource Text.Metric}" Text="{Binding State.OneLowFps}" />
+                            <TextBlock Style="{StaticResource Text.Unit}" Text="1% low" />
+                        </StackPanel>
+                        <Grid Margin="0,12,0,0">
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Средний FPS" />
+                            <TextBlock HorizontalAlignment="Right"
+                                       FontFamily="{StaticResource Font.Numeric}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource Brush.Text}"
+                                       Text="{Binding State.AverageFps}" />
+                        </Grid>
+                        <Grid Margin="0,6,0,0">
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Максимум" />
+                            <TextBlock HorizontalAlignment="Right"
+                                       FontFamily="{StaticResource Font.Numeric}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource Brush.Text}"
+                                       Text="{Binding State.MaxFps}" />
+                        </Grid>
+                        <Grid Margin="0,6,0,0">
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="Потенциал после твиков" />
+                            <TextBlock HorizontalAlignment="Right"
+                                       FontFamily="{StaticResource Font.Numeric}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource Brush.Accent}"
+                                       Text="{Binding State.PotentialFps}" />
+                        </Grid>
+                        <Button Command="{Binding ResetStatsCommand}"
+                                Content="Сбросить статистику"
+                                Style="{StaticResource Btn.Soft}"
+                                HorizontalAlignment="Left"
+                                Margin="0,14,0,0" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ============================= ГРАФИК И УПРАВЛЕНИЕ ============================= -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16" Padding="22">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Style="{StaticResource Icon}"
+                                      Width="16"
+                                      Height="16"
+                                      Data="{StaticResource Icon.Gauge}"
+                                      Fill="{StaticResource Brush.Accent}" />
+                                <TextBlock Margin="9,0,0,0"
+                                           Style="{StaticResource Text.Section}"
+                                           Text="Частота кадров в реальном времени" />
+                            </StackPanel>
+                            <TextBlock HorizontalAlignment="Right" Style="{StaticResource Text.Caption}">
+                                <Run Text="средний " />
+                                <Run FontWeight="SemiBold" Foreground="{StaticResource Brush.TextMuted}" Text="{Binding State.AverageFps, Mode=OneWay}" />
+                                <Run Text=" FPS" />
+                            </TextBlock>
+                        </Grid>
+
+                        <Viewbox Height="170" Stretch="Fill" HorizontalAlignment="Stretch" ClipToBounds="True">
+                            <Canvas Width="1000" Height="100">
+                                <Line X1="0" X2="1000" Y1="22" Y2="22" Stroke="{StaticResource Brush.StrokeSoft}" StrokeDashArray="6 10" StrokeThickness="1" />
+                                <Line X1="0" X2="1000" Y1="50" Y2="50" Stroke="{StaticResource Brush.StrokeSoft}" StrokeDashArray="6 10" StrokeThickness="1" />
+                                <Line X1="0" X2="1000" Y1="78" Y2="78" Stroke="{StaticResource Brush.StrokeSoft}" StrokeDashArray="6 10" StrokeThickness="1" />
+                                <Polygon Fill="{StaticResource Gradient.ChartArea}" Points="{Binding State.FpsAreaPoints}" />
+                                <Polyline Points="{Binding State.FpsHistoryPoints}"
+                                          Stroke="{StaticResource Gradient.AccentHorizontal}"
+                                          StrokeLineJoin="Round"
+                                          StrokeThickness="2.4" />
+                            </Canvas>
+                        </Viewbox>
+
+                        <Grid Margin="0,10,0,0">
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="30 секунд назад" />
+                            <TextBlock HorizontalAlignment="Right" Style="{StaticResource Text.Caption}" Text="сейчас" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Width="252" Margin="24,0,0,0">
+                        <Button Command="{Binding ToggleGameModeCommand}"
+                                Style="{StaticResource Btn.Primary}"
+                                Height="52">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Width="17"
+                                      Height="17"
+                                      Data="{StaticResource Icon.Gamepad}"
+                                      Fill="{StaticResource Brush.OnAccent}"
+                                      Stretch="Uniform"
+                                      VerticalAlignment="Center" />
+                                <TextBlock Margin="9,0,0,0"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding State.GameModeText}" />
+                            </StackPanel>
+                        </Button>
+
+                        <Border Style="{StaticResource Card.Flat}" Margin="0,12,0,0" Padding="14">
+                            <StackPanel>
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource Brush.Text}"
+                                                   Text="Авто-оптимизация" />
+                                        <TextBlock Style="{StaticResource Text.Caption}"
+                                                   Margin="0,3,0,0"
+                                                   Text="Следить за фоном автоматически" />
+                                    </StackPanel>
+                                    <CheckBox HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding State.IsAutoMode, Mode=TwoWay}"
+                                              Style="{StaticResource Switch}" />
+                                </Grid>
+
+                                <Grid Margin="0,16,0,0">
+                                    <StackPanel>
+                                        <TextBlock FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource Brush.Text}"
+                                                   Text="Мониторинг FPS" />
+                                        <TextBlock Style="{StaticResource Text.Caption}"
+                                                   Margin="0,3,0,0">
+                                            <Run Text="{Binding State.FpsStatusText, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <CheckBox HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding State.IsPaused, Mode=OneWay}"
+                                              Command="{Binding TogglePauseCommand}"
+                                              Style="{StaticResource Switch}"
+                                              ToolTip="Приостановить/возобновить мониторинг" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Button Command="{Binding OpenLogCommand}"
+                                Style="{StaticResource Btn.Soft}"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,12,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Style="{StaticResource Icon}"
+                                      Width="15"
+                                      Height="15"
+                                      Data="{StaticResource Icon.Log}"
+                                      Fill="{StaticResource Brush.TextMuted}" />
+                                <TextBlock Margin="9,0,0,0" FontWeight="SemiBold" Text="Открыть журнал" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ============================= ИНФОРМАЦИЯ О СИСТЕМЕ ============================= -->
+            <Border Style="{StaticResource Card}" Padding="22">
+                <StackPanel>
+                    <Grid Margin="0,0,0,16">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Style="{StaticResource Icon}"
+                                  Width="16"
+                                  Height="16"
+                                  Data="{StaticResource Icon.Windows}"
+                                  Fill="{StaticResource Brush.Blue}" />
+                            <TextBlock Margin="9,0,0,0"
+                                       Style="{StaticResource Text.Section}"
+                                       Text="Конфигурация компьютера" />
+                        </StackPanel>
+                        <TextBlock HorizontalAlignment="Right"
+                                   Style="{StaticResource Text.Caption}"
+                                   Text="{Binding State.LastScanText}"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding InfoItems}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="4" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource Brush.SurfaceAlt}"
+                                        BorderBrush="{StaticResource Brush.StrokeSoft}"
+                                        BorderThickness="1"
+                                        CornerRadius="13"
+                                        Margin="0,0,12,12"
+                                        Padding="14">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Label}" />
+                                        <TextBlock Margin="0,7,0,0"
+                                                   FontSize="13.5"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource Brush.Text}"
+                                                   Text="{Binding Value}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding Value}" />
+                                        <TextBlock Style="{StaticResource Text.Caption}"
+                                                   Margin="0,5,0,0"
+                                                   Text="{Binding Hint}"
+                                                   Visibility="{Binding HasHint, Converter={StaticResource BoolToVis}}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

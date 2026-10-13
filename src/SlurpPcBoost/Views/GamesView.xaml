@@ -1,0 +1,193 @@
+<UserControl x:Class="SlurpPcBoost.Views.GamesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:conv="clr-namespace:SlurpPcBoost.Converters"
+             d:DesignHeight="760"
+             d:DesignWidth="1060"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:BoolNegationConverter x:Key="Not" />
+        <conv:EmptyStringToVisibilityConverter x:Key="EmptyToVis" />
+        <conv:EmptyStringToVisibilityConverter x:Key="EmptyToVisInvert" Invert="True" />
+        <conv:FilterEqualsConverter x:Key="FilterEquals" />
+    </UserControl.Resources>
+
+    <ScrollViewer Padding="0,0,8,0"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+
+            <!-- Поиск и фильтры -->
+            <Border Style="{StaticResource Card}" Padding="24" Margin="0,0,0,16">
+                <StackPanel>
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Text.Title}" Text="Игровые профили" />
+                            <TextBlock Style="{StaticResource Text.Body}"
+                                       Margin="0,10,0,0"
+                                       MaxWidth="640"
+                                       HorizontalAlignment="Left"
+                                       Text="Выберите игру — приложение подберёт набор настроек под её жанр. В демо-режиме профили только имитируются." />
+                        </StackPanel>
+                        <TextBlock HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Style="{StaticResource Text.Caption}"
+                                   Text="{Binding CountText}" />
+                    </Grid>
+
+                    <Grid Margin="0,20,0,14" HorizontalAlignment="Left" Width="420">
+                        <TextBox Style="{StaticResource Field}"
+                                 Padding="44,0,44,0"
+                                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Path Width="16"
+                              Height="16"
+                              Margin="15,0,0,0"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Data="{StaticResource Icon.Search}"
+                              Fill="{StaticResource Brush.TextDim}"
+                              IsHitTestVisible="False"
+                              Stretch="Uniform" />
+                        <TextBlock Margin="45,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="13.5"
+                                   Foreground="{StaticResource Brush.TextDim}"
+                                   IsHitTestVisible="False"
+                                   Text="Найти игру…"
+                                   Visibility="{Binding SearchText, Converter={StaticResource EmptyToVis}}" />
+                        <Button HorizontalAlignment="Right"
+                                Style="{StaticResource Btn.Icon}"
+                                Width="36"
+                                Height="36"
+                                Margin="0,0,5,0"
+                                Command="{Binding ClearSearchCommand}"
+                                Visibility="{Binding SearchText, Converter={StaticResource EmptyToVisInvert}}"
+                                ToolTip="Очистить">
+                            <Path Width="13"
+                                  Height="13"
+                                  Data="{StaticResource Icon.Close}"
+                                  Fill="{StaticResource Brush.TextMuted}"
+                                  Stretch="Uniform" />
+                        </Button>
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding Filters}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <RadioButton Command="{Binding DataContext.SelectFilterCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                             CommandParameter="{Binding}"
+                                             GroupName="GamesFilters"
+                                             Style="{StaticResource Chip.Radio}"
+                                             Content="{Binding}">
+                                    <RadioButton.IsChecked>
+                                        <MultiBinding Converter="{StaticResource FilterEquals}" Mode="OneWay">
+                                            <Binding Path="." />
+                                            <Binding Path="DataContext.SelectedFilter" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                        </MultiBinding>
+                                    </RadioButton.IsChecked>
+                                </RadioButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Карточки игр -->
+            <ItemsControl ItemsSource="{Binding VisibleGames}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Card}"
+                                Width="256"
+                                Margin="0,0,14,14"
+                                Padding="16">
+                            <StackPanel>
+                                <Grid>
+                                    <Border Width="48"
+                                            Height="48"
+                                            HorizontalAlignment="Left"
+                                            Background="{Binding Gradient}"
+                                            CornerRadius="14">
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource Font.Numeric}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Foreground="White"
+                                                   Text="{Binding Initials}" />
+                                    </Border>
+                                    <Border HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
+                                            Background="{StaticResource Brush.GreenSoft}"
+                                            CornerRadius="8"
+                                            Padding="9,4"
+                                            Visibility="{Binding IsOptimized, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock FontSize="10.5"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource Brush.Green}"
+                                                   Text="АКТИВЕН" />
+                                    </Border>
+                                </Grid>
+
+                                <StackPanel Margin="0,14,0,0">
+                                    <TextBlock FontSize="14.5"
+                                               FontWeight="SemiBold"
+                                               Foreground="{StaticResource Brush.Text}"
+                                               Text="{Binding Name}"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding Name}" />
+                                    <TextBlock Style="{StaticResource Text.Caption}"
+                                               Margin="0,5,0,0"
+                                               Text="{Binding Category}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Style="{StaticResource Text.Caption}"
+                                               Margin="0,7,0,0"
+                                               Foreground="{StaticResource Brush.Accent}"
+                                               Text="{Binding StatusText}"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+
+                                <Button Style="{StaticResource Btn.Soft}"
+                                        Margin="0,16,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        Command="{Binding DataContext.OptimizeGameCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        IsEnabled="{Binding DataContext.State.IsNotBusy, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+                                    <TextBlock FontWeight="SemiBold">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="Оптимизировать" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                        <Setter Property="Text" Value="Работаем…" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsOptimized}" Value="True">
+                                                        <Setter Property="Text" Value="Отключить профиль" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

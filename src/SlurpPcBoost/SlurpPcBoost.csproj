@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>SlurpPcBoost</RootNamespace>
+    <AssemblyName>SlurpPcBoost</AssemblyName>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>Slurp PC Boost</Product>
+    <AssemblyTitle>Slurp PC Boost</AssemblyTitle>
+    <Company>slurppcrack</Company>
+    <Description>Демонстрационное приложение-оптимизатор ПК для геймеров (WPF, .NET 8, в стиле hone.gg)</Description>
+    <NeutralLanguage>ru-RU</NeutralLanguage>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- Позволяет собирать проект и на Linux/macOS (без запуска), удобно для CI -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Platforms>AnyCPU;x64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!--
+    Публикация одним self-contained .exe (не требует установленного .NET):
+      dotnet publish src/SlurpPcBoost/SlurpPcBoost.csproj -c Release
+  -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <TrimmerRootDescriptor />
+  </PropertyGroup>
+
+</Project>
