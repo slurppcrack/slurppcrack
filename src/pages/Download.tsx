@@ -1,71 +1,60 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Check, Download as DownloadIcon, ExternalLink, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Download as DownloadIcon, ExternalLink, FileCode2, ShieldCheck, Sparkles } from 'lucide-react'
 import { Footer } from './Landing'
 import { Brand } from '../components/Brand'
 import { CopyButton, Reveal, Seg } from '../components/ui'
+import { APP } from '../lib/app-info'
 
-const RELEASES = [
-  {
-    id: 'mac',
-    label: 'macOS',
-    note: 'Universal — Apple silicon & Intel',
-    file: 'Slurp-0.9.4-universal.dmg',
-    size: '94.2 MB',
-    sha: 'a41f3c9e7b2d84f1c0a5db6e9f3a7c2d8e1b4f60a9c3d2e7b8f1a4c6d9e0b2f5',
-    req: ['macOS 12 Monterey or newer', 'Apple silicon or Intel', '~340 MB on disk'],
-    steps: ['Open the .dmg and drag SLURP into Applications.', 'Launch it — the binary is signed and notarised, so no Gatekeeper dance.', 'The setup wizard opens. Pick a provider, paste a key, done.'],
-  },
+const PLATFORMS = [
   {
     id: 'win',
     label: 'Windows',
-    note: 'x64 installer · arm64 portable available',
-    file: 'Slurp-Setup-0.9.4.exe',
-    size: '88.6 MB',
-    sha: 'c92b7e1a4d8f0c3b6e5a2d9f7c1b8e4a0d3f6c9b2e5a8d1f4c7b0e3a6d9f2c5b',
-    req: ['Windows 10 (21H2) or newer', 'x64 or arm64', '~360 MB on disk'],
-    steps: ['Run the installer. It is signed; SmartScreen shows the publisher name.', 'SLURP registers a terminal command: slurp.', 'On first launch Windows asks once for a keychain unlock.'],
+    glyph: '❖',
+    note: 'Windows 10/11 · any modern browser',
+    steps: [
+      'Download SLURP.html (or grab the ZIP and take it from release/).',
+      'Move it anywhere you like — Desktop, C:\\dev, a USB stick. It is a single file.',
+      'Double-click it. It opens in Edge or Chrome and the app is running. No installer, no Node.js, no admin rights.',
+    ],
+    tip: 'If Edge asks “Open file?”, tick “Always open files of this type” so the next launches are one click.',
+  },
+  {
+    id: 'mac',
+    label: 'macOS',
+    glyph: '⌘',
+    note: 'macOS 12+ · Safari, Chrome, Arc',
+    steps: [
+      'Download SLURP.html and drop it in Applications or anywhere else.',
+      'Double-click it — the default browser opens it as a local app.',
+      'Optionally drag it into the Dock for a one-click launch.',
+    ],
+    tip: 'Gatekeeper never blocks it: it is an HTML file, not a binary, so it is not quarantined.',
   },
   {
     id: 'linux',
     label: 'Linux',
-    note: 'AppImage · .deb · .rpm · AUR',
-    file: 'Slurp-0.9.4-x86_64.AppImage',
-    size: '91.8 MB',
-    sha: 'e7d2a5c8b1f4e0d3a6c9b2e5d8f1a4c7b0e3d6a9f2c5b8e1d4a7c0f3b6e9d2a5',
-    req: ['glibc 2.31+ (Ubuntu 20.04+)', 'x86_64 or aarch64', '~330 MB on disk'],
-    steps: ['chmod +x Slurp-*.AppImage && ./Slurp-*.AppImage', 'Or install the .deb for a tray icon and desktop entry.', 'On Wayland, launch with --ozone-platform=wayland for native scaling.'],
+    glyph: '⌥',
+    note: 'any distro with a browser',
+    steps: [
+      'Download SLURP.html.',
+      'Open it with your browser: xdg-open SLURP.html',
+      'Or drop it into a desktop-entry launcher and pin it.',
+    ],
+    tip: 'Fully offline: the file never makes a network request unless you add an API key.',
   },
 ] as const
 
-const CHECKS = [
-  ['Checksum', 'sha256 — verify with shasum -a 256 <file>'],
-  ['Signing', 'Apple notarised · Windows Authenticode · Linux GPG'],
-  ['Network', 'No telemetry. Outbound calls only to providers you configure.'],
-  ['Uninstall', 'One command, zero leftovers in your repo.'],
-]
-
-const CHANGELOG = [
-  ['0.9.4', '2 days ago', [
-    'Subagent delegation: hand grep-and-summarise work to a cheap model automatically.',
-    'New Repo Lens index — on-device embeddings, 6× fewer tokens to find the right file.',
-    'Session replay: scrub through every tool call of a finished run.',
-    'Fixed: checkpoints were not restored when a run failed mid-patch.',
-  ]],
-  ['0.9.2', '3 weeks ago', [
-    'Kimi K2 Thinking and DeepSeek V3.2 added to the catalog with live pricing.',
-    'Autonomy dial now respects per-directory rules.',
-    'Diff view shows the agent\'s reasoning inline, collapsed by default.',
-  ]],
-  ['0.9.0', '2 months ago', [
-    'First public beta. Planner-first loop, 12 tools, plugin SDK v1.',
-  ]],
+const SELLING_POINTS = [
+  ['No install, no Node.js', 'One HTML file holds the app, the styles, the fonts and the agent engine. Nothing to compile, nothing to sign.', Sparkles],
+  ['Works offline', 'Zero network requests until you paste a provider key. Open it on a plane and the harness still runs.', ShieldCheck],
+  ['Portable and auditable', 'Copy it to a USB stick, email it, read the source. Same file on every machine you own.', FileCode2],
 ]
 
 export default function Download() {
-  const [os, setOs] = useState<'mac' | 'win' | 'linux'>('mac')
-  const active = RELEASES.find((r) => r.id === os)!
-  const [tab, setTab] = useState<'install' | 'verify' | 'notes'>('install')
+  const [os, setOs] = useState<'win' | 'mac' | 'linux'>('win')
+  const [tab, setTab] = useState<'run' | 'verify' | 'notes'>('run')
+  const active = PLATFORMS.find((p) => p.id === os)!
 
   return (
     <div className="site">
@@ -82,7 +71,7 @@ export default function Download() {
           </nav>
           <div className="nav-right">
             <Link to="/app" className="btn btn-ghost btn-sm" style={{ height: 34 }}>
-              Web demo
+              Open in browser
             </Link>
           </div>
         </div>
@@ -90,35 +79,30 @@ export default function Download() {
 
       <div className="wrap" style={{ paddingTop: 118, paddingBottom: 40, position: 'relative', zIndex: 1 }}>
         <Reveal>
-          <div style={{ maxWidth: 720 }}>
-            <span className="eyebrow">Download · v0.9.4</span>
-            <h1 style={{ fontSize: 'clamp(34px, 5vw, 56px)', marginTop: 14, letterSpacing: '-0.04em' }}>
-              Get the desktop app.
-            </h1>
+          <div style={{ maxWidth: 740 }}>
+            <span className="eyebrow">Download · v{APP.version}</span>
+            <h1 style={{ fontSize: 'clamp(34px, 5vw, 56px)', marginTop: 14, letterSpacing: '-0.04em' }}>Get the app.</h1>
             <p style={{ marginTop: 16, color: 'var(--muted)', fontSize: 16, lineHeight: 1.65 }}>
-              The desktop build has what the browser cannot: filesystem access, a real shell, OS keychain, native notifications
-              and the local model runtime. Free during open beta.
+              One self-contained file, {APP.size}. Double-click it and the whole harness runs — landing, agent loop,
+              settings, first-run wizard. No installer, no runtime to download, no account.
             </p>
           </div>
         </Reveal>
 
         <Reveal delay={60}>
-          <div style={{ marginTop: 40 }}>
+          <div style={{ marginTop: 38 }}>
             <Seg
               value={os}
               onChange={setOs}
               options={[
-                { id: 'mac', label: 'macOS' },
                 { id: 'win', label: 'Windows' },
+                { id: 'mac', label: 'macOS' },
                 { id: 'linux', label: 'Linux' },
               ]}
             />
           </div>
 
-          <div
-            className="card"
-            style={{ marginTop: 18, padding: 'clamp(20px, 3vw, 32px)', display: 'grid', gap: 24 }}
-          >
+          <div className="card" style={{ marginTop: 18, padding: 'clamp(20px, 3vw, 32px)', display: 'grid', gap: 24 }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18 }}>
               <div
                 style={{
@@ -134,26 +118,35 @@ export default function Download() {
                   flex: 'none',
                 }}
               >
-                {active.id === 'mac' ? '⌘' : active.id === 'win' ? '❖' : '⌥'}
+                {active.glyph}
               </div>
               <div style={{ flex: 1, minWidth: 220 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                   <h2 style={{ fontSize: 21 }}>SLURP for {active.label}</h2>
-                  <span className="chip chip-accent">0.9.4</span>
-                  <span className="chip">stable</span>
+                  <span className="chip chip-accent">v{APP.version}</span>
+                  <span className="chip">offline build</span>
                 </div>
                 <p style={{ color: 'var(--muted)', fontSize: 13, marginTop: 4 }}>
-                  {active.note} · {active.size}
+                  {active.note} · {APP.size} · same file on every OS
                 </p>
               </div>
-              <a
-                className="btn btn-primary btn-lg"
-                href={`#${active.file}`}
-                onClick={(e) => e.preventDefault()}
-                style={{ minWidth: 210 }}
-              >
-                <DownloadIcon size={16} /> Download {active.label}
-              </a>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <a className="btn btn-primary btn-lg" href={APP.blob} target="_blank" rel="noreferrer" style={{ minWidth: 200 }}>
+                  <DownloadIcon size={16} /> Get {APP.file}
+                </a>
+                <a className="btn btn-ghost btn-lg" href={APP.zip} target="_blank" rel="noreferrer">
+                  Source ZIP
+                </a>
+              </div>
+            </div>
+
+            <div className="note info" style={{ fontSize: 12.5 }}>
+              <ExternalLink />
+              <span>
+                GitHub opens the file in a viewer — press the <b>download icon</b> in its top-right corner (“Download raw
+                file”) to save it to disk. Then double-click the saved file. The ZIP route works the same way: unzip, then
+                open <span className="mono">release/SLURP.html</span>.
+              </span>
             </div>
 
             <div
@@ -171,20 +164,24 @@ export default function Download() {
                 color: 'var(--muted)',
               }}
             >
-              <span style={{ color: 'var(--text-soft)' }}>{active.file}</span>
+              <span style={{ color: 'var(--text-soft)' }}>{APP.file}</span>
               <span style={{ opacity: 0.4 }}>·</span>
-              <span style={{ overflowWrap: 'anywhere' }}>sha256 {active.sha}</span>
+              <span>{APP.size}</span>
+              <span style={{ opacity: 0.4 }}>·</span>
+              <a href={APP.sums} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
+                sha256 in SHA256.txt ↗
+              </a>
               <span style={{ marginLeft: 'auto' }}>
-                <CopyButton text={active.sha} />
+                <CopyButton text={APP.file} />
               </span>
             </div>
 
             <div>
               <div className="seg" style={{ marginBottom: 14 }}>
                 {[
-                  ['install', 'How to install'],
-                  ['verify', 'Verify the download'],
-                  ['notes', 'Release notes'],
+                  ['run', 'How to run it'],
+                  ['verify', 'Verify the file'],
+                  ['notes', 'What is inside'],
                 ].map(([id, label]) => (
                   <button key={id} className={tab === id ? 'on' : ''} onClick={() => setTab(id as any)}>
                     {label}
@@ -192,7 +189,7 @@ export default function Download() {
                 ))}
               </div>
 
-              {tab === 'install' && (
+              {tab === 'run' && (
                 <div style={{ display: 'grid', gap: 10 }}>
                   {active.steps.map((s, i) => (
                     <div key={s} style={{ display: 'flex', gap: 12 }}>
@@ -216,11 +213,9 @@ export default function Download() {
                       <p style={{ fontSize: 13.5, color: 'var(--text-soft)', lineHeight: 1.6 }}>{s}</p>
                     </div>
                   ))}
-                  <div className="mono" style={{ marginTop: 6, fontSize: 11.5, color: 'var(--muted)' }}>
-                    also available:{' '}
-                    <span style={{ color: 'var(--accent)' }}>
-                      {active.id === 'mac' ? 'brew install --cask slurp' : active.id === 'win' ? 'winget install Slurp.Slurp' : 'yay -S slurp-bin'}
-                    </span>
+                  <div className="note ok" style={{ marginTop: 6 }}>
+                    <Sparkles />
+                    <span>{active.tip}</span>
                   </div>
                 </div>
               )}
@@ -228,14 +223,25 @@ export default function Download() {
               {tab === 'verify' && (
                 <div style={{ display: 'grid', gap: 14 }}>
                   <p style={{ color: 'var(--muted)', fontSize: 13.5, lineHeight: 1.6 }}>
-                    Every build is reproducible from a tagged commit. Compare the hash after download:
+                    The file is plain text — you can read every line of it. The published checksum lives in{' '}
+                    <a href={APP.sums} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
+                      release/SHA256.txt
+                    </a>{' '}
+                    next to the file (it cannot live inside the file itself). Compare after downloading:
                   </p>
-                  <div className="mono" style={{ padding: 12, borderRadius: 10, background: 'rgba(0,0,0,.4)', border: '1px solid var(--line)', fontSize: 11.5, color: 'var(--text-soft)' }}>
-                    {active.id === 'win' ? 'certutil -hashfile ' : 'shasum -a 256 '}
-                    {active.file}
+                  <div
+                    className="mono"
+                    style={{ padding: 12, borderRadius: 10, background: 'rgba(0,0,0,.4)', border: '1px solid var(--line)', fontSize: 11.5, color: 'var(--text-soft)' }}
+                  >
+                    {active.id === 'win' ? 'certutil -hashfile SLURP.html SHA256' : 'shasum -a 256 SLURP.html'}
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: 10 }}>
-                    {CHECKS.map(([k, v]) => (
+                    {[
+                      ['Contents', 'HTML + JS + CSS + fonts, inlined. No external requests.'],
+                      ['Network', 'None until you paste a provider API key.'],
+                      ['Storage', 'Settings live in this browser profile’s localStorage.'],
+                      ['Safety', 'An HTML file cannot install anything or touch your filesystem.'],
+                    ].map(([k, v]) => (
                       <div key={k} style={{ padding: 13, borderRadius: 11, border: '1px solid var(--line)', background: 'rgba(255,255,255,.02)' }}>
                         <div className="mono" style={{ fontSize: 9.5, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--muted-dim)', marginBottom: 5 }}>
                           {k}
@@ -248,22 +254,41 @@ export default function Download() {
               )}
 
               {tab === 'notes' && (
-                <div style={{ display: 'grid', gap: 18 }}>
-                  {CHANGELOG.map(([v, when, items]: any) => (
-                    <div key={v}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
-                        <span className="mono" style={{ fontSize: 12, color: 'var(--accent)' }}>v{v}</span>
-                        <span style={{ fontSize: 11.5, color: 'var(--muted-dim)' }}>{when}</span>
-                      </div>
-                      <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 5 }}>
-                        {items.map((it: string) => (
-                          <li key={it} style={{ fontSize: 13, color: 'var(--text-soft)', lineHeight: 1.55 }}>
-                            {it}
-                          </li>
-                        ))}
-                      </ul>
+                <div style={{ display: 'grid', gap: 16 }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
+                      <span className="mono" style={{ fontSize: 12, color: 'var(--accent)' }}>v0.9.4</span>
+                      <span style={{ fontSize: 11.5, color: 'var(--muted-dim)' }}>current build</span>
                     </div>
-                  ))}
+                    <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 5 }}>
+                      {[
+                        'Agent loop you can watch: reasoning, plan, tool calls, diffs, test output, summary with cost.',
+                        'Full settings surface: models, subagent, persona, provider keys, tool permissions, plugins, theme.',
+                        'First-run wizard with eight steps and a live preview of every choice.',
+                        'Single-file build: works from file://, hash routing, zero network requests.',
+                      ].map((t) => (
+                        <li key={t} style={{ fontSize: 13, color: 'var(--text-soft)', lineHeight: 1.55 }}>
+                          {t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="mono" style={{ fontSize: 9.5, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--muted-dim)', marginBottom: 8 }}>
+                      Not in this build yet
+                    </div>
+                    <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 5 }}>
+                      {[
+                        'Real filesystem access — the tools are simulated in this build, so diffs look right but your files are untouched.',
+                        'Native window and OS keychain — that is the Tauri wrapper, the next milestone.',
+                        'Live API calls need a provider key and a browser that allows CORS to that provider.',
+                      ].map((t) => (
+                        <li key={t} style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.55 }}>
+                          {t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
             </div>
@@ -273,7 +298,7 @@ export default function Download() {
                 Requirements
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {active.req.map((r) => (
+                {['Any modern browser', 'No Node.js', 'No admin rights', 'Works offline', '868 KB'].map((r) => (
                   <span className="chip" key={r}>
                     <Check size={11} /> {r}
                   </span>
@@ -285,11 +310,7 @@ export default function Download() {
 
         <Reveal delay={80}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12, marginTop: 28 }}>
-            {[
-              ['No account required', 'Download, paste a key, start. Email is optional and only used if you enable team sync.', Sparkles],
-              ['Signed and notarised', 'macOS notarisation, Windows Authenticode, GPG-signed Linux packages. Every build.', ShieldCheck],
-              ['Web demo included', 'Do not want to install anything? The full harness runs in the browser with a simulated repo.', ArrowRight],
-            ].map(([t, d, Icon]: any) => (
+            {SELLING_POINTS.map(([t, d, Icon]: any) => (
               <div className="card" key={t} style={{ padding: 18 }}>
                 <Icon size={16} style={{ color: 'var(--accent)', marginBottom: 10 }} />
                 <b style={{ fontSize: 13.5, display: 'block', marginBottom: 4 }}>{t}</b>
@@ -300,18 +321,32 @@ export default function Download() {
         </Reveal>
 
         <Reveal delay={100}>
-          <div className="card" style={{ marginTop: 28, padding: 22, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 16 }}>
-            <div style={{ flex: 1, minWidth: 240 }}>
-              <b style={{ fontSize: 14 }}>Prefer to poke at it first?</b>
-              <p style={{ color: 'var(--muted)', fontSize: 12.5, marginTop: 4 }}>
-                The web demo is the same harness with a sandboxed fake repo, a working settings surface and a scripted run.
-              </p>
+          <div className="card" style={{ marginTop: 28, padding: 22, display: 'grid', gap: 14 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14 }}>
+              <div style={{ flex: 1, minWidth: 260 }}>
+                <b style={{ fontSize: 14 }}>Prefer to work from source?</b>
+                <p style={{ color: 'var(--muted)', fontSize: 12.5, marginTop: 4 }}>
+                  Clone the repo and run the dev server — hot reload, TypeScript checks and the same app. Node.js 18+ is
+                  required for that route only.
+                </p>
+              </div>
+              <a className="btn btn-ghost" href={APP.repo} target="_blank" rel="noreferrer">
+                GitHub <ExternalLink size={14} />
+              </a>
+              <Link to="/app" className="btn btn-quiet">
+                Open in browser <ArrowRight size={14} />
+              </Link>
             </div>
-            <Link to="/app" className="btn btn-ghost">
-              Open web demo <ExternalLink size={14} />
-            </Link>
+            <div className="mono" style={{ fontSize: 11.5, padding: '10px 12px', borderRadius: 9, border: '1px solid var(--line)', background: 'rgba(0,0,0,.35)', color: 'var(--muted)' }}>
+              npm install && npm run dev <span style={{ color: 'var(--muted-dim)' }}>· or npm run build:app to rebuild the single file</span>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal delay={120}>
+          <div style={{ marginTop: 24 }}>
             <Link to="/" className="btn btn-quiet">
-              <ArrowLeft size={14} /> Overview
+              <ArrowLeft size={14} /> Back to overview
             </Link>
           </div>
         </Reveal>

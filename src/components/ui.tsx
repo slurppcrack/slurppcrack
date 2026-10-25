@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { Check, Copy, X } from 'lucide-react'
 
 export function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label?: string }) {
   return (
@@ -125,7 +125,7 @@ export function CopyButton({ text }: { text: string }) {
         setTimeout(() => setDone(false), 1600)
       }}
     >
-      {done ? <Check size={13} /> : <span style={{ fontSize: 12 }}>⧉</span>}
+      {done ? <Check size={13} /> : <Copy size={12} />}
     </button>
   )
 }

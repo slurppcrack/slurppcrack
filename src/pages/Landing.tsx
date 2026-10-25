@@ -15,6 +15,7 @@ import {
   Lock,
   Menu,
   Plug,
+  Play,
   Plus,
   Sliders,
   Sparkles,
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react'
 import { Brand, Mark } from '../components/Brand'
 import { CopyButton, Reveal } from '../components/ui'
+import { APP } from '../lib/app-info'
 import { PluginIcon } from '../components/glyphs'
 import { MODELS, PROVIDERS, fmtContext, fmtPrice, providerById, type ProviderId } from '../lib/models'
 import { PLUGINS } from '../lib/plugins'
@@ -231,9 +233,9 @@ function Hero() {
               on your own laptop — describe what you want, and watch it plan, edit, run tests and show you every diff.
             </p>
             <div className="hero-actions">
-              <Link to="/download" className="btn btn-primary btn-lg">
-                <Download size={16} /> Download for desktop
-              </Link>
+              <a href={APP.blob} target="_blank" rel="noreferrer" className="btn btn-primary btn-lg">
+                <Download size={16} /> Download the app · {APP.size}
+              </a>
               <Link to="/app" className="btn btn-ghost btn-lg">
                 Try the web demo <ArrowRight size={15} />
               </Link>
@@ -745,53 +747,57 @@ function PluginsSection() {
   )
 }
 
-function detectOS() {
-  const ua = navigator.userAgent
-  if (/Mac/i.test(ua)) return 'mac'
-  if (/Win/i.test(ua)) return 'win'
-  return 'linux'
-}
-
-const OS_LIST = [
-  { id: 'mac', label: 'macOS', sub: 'Apple silicon · universal', file: 'Slurp-0.9.4-universal.dmg', size: '94 MB' },
-  { id: 'win', label: 'Windows', sub: 'x64 installer', file: 'Slurp-Setup-0.9.4.exe', size: '88 MB' },
-  { id: 'linux', label: 'Linux', sub: 'AppImage · deb · rpm', file: 'Slurp-0.9.4-x86_64.AppImage', size: '91 MB' },
-] as const
 
 function DownloadSection() {
-  const [os, setOs] = useState<string>(() => detectOS())
   return (
     <section className="section" id="download">
       <div className="wrap">
         <Reveal>
           <div className="download-wrap">
             <span className="eyebrow">Get SLURP</span>
-            <h2 style={{ marginTop: 14 }}>Ninety seconds from here to running.</h2>
-            <p style={{ color: 'var(--muted)', marginTop: 14, fontSize: 15 }}>
-              Free while in open beta. Bring your own API key, or run entirely offline with a local model.
+            <h2 style={{ marginTop: 14 }}>One file. Double-click. Done.</h2>
+            <p style={{ color: 'var(--muted)', marginTop: 14, fontSize: 15, maxWidth: '56ch', marginInline: 'auto' }}>
+              The whole app ships as a single {APP.size} HTML file — the harness, the settings, the wizard, the fonts.
+              No installer, no Node.js, no account. Works offline.
             </p>
             <div className="dl-buttons">
-              {OS_LIST.map((o) => (
-                <Link to="/download" key={o.id} className={`dl-btn${os === o.id ? ' primary' : ''}`}>
-                  <span style={{ display: 'grid', placeItems: 'center', width: 20 }}>
-                    {o.id === 'mac' ? '⌘' : o.id === 'win' ? '❖' : '⌥'}
-                  </span>
-                  <span>
-                    <span className="os">{o.sub}</span>
-                    <span className="nm">{o.label}</span>
-                  </span>
-                  {os === o.id && <ArrowRight size={14} style={{ marginLeft: 'auto' }} />}
-                </Link>
-              ))}
+              <a className="dl-btn primary" href={APP.blob} target="_blank" rel="noreferrer">
+                <span style={{ display: 'grid', placeItems: 'center', width: 20 }}>
+                  <Download size={16} />
+                </span>
+                <span>
+                  <span className="os">offline · v{APP.version} · {APP.size}</span>
+                  <span className="nm">Download {APP.file}</span>
+                </span>
+                <ArrowRight size={14} style={{ marginLeft: 'auto' }} />
+              </a>
+              <a className="dl-btn" href={APP.zip} target="_blank" rel="noreferrer">
+                <span style={{ display: 'grid', placeItems: 'center', width: 20 }}>
+                  <FileCode2 size={15} />
+                </span>
+                <span>
+                  <span className="os">source · npm</span>
+                  <span className="nm">Get the repo (ZIP)</span>
+                </span>
+              </a>
+              <Link to="/app" className="dl-btn">
+                <span style={{ display: 'grid', placeItems: 'center', width: 20 }}>
+                  <Play size={14} />
+                </span>
+                <span>
+                  <span className="os">nothing to install</span>
+                  <span className="nm">Run it here</span>
+                </span>
+              </Link>
             </div>
             <div className="cmd-box">
-              <span style={{ color: 'var(--muted-dim)' }}>$</span> brew install --cask slurp
-              <CopyButton text="brew install --cask slurp" />
+              <span style={{ color: 'var(--muted-dim)' }}>$</span> open SLURP.html
+              <CopyButton text="open SLURP.html" />
             </div>
             <div className="dl-note">
-              <span>Version 0.9.4 · released 2 days ago</span>
+              <span>v{APP.version} · single file · {APP.size}</span>
               <span>·</span>
-              <span>Signed & notarised</span>
+              <span>Windows · macOS · Linux</span>
               <span>·</span>
               <span>SHA-256 on the download page</span>
             </div>
