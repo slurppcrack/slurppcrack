@@ -217,7 +217,7 @@ public partial class MainWindow : Window
 
     private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Escape && _cts is { IsCancellationRequested: false, IsDisposed: false })
+        if (e.Key == Key.Escape && _cts is { IsCancellationRequested: false })
         {
             _cts.Cancel();
             e.Handled = true;
@@ -282,7 +282,7 @@ public partial class MainWindow : Window
     {
         var text = Composer.Text?.Trim() ?? "";
         if (string.IsNullOrWhiteSpace(text)) return;
-        if (_cts is { IsCancellationRequested: false, IsDisposed: false }) return;
+        if (_cts is { IsCancellationRequested: false }) return;
 
         if (string.IsNullOrWhiteSpace(_settings.LastWorkspace) || !Directory.Exists(_settings.LastWorkspace))
         {

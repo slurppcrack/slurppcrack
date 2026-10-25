@@ -89,10 +89,10 @@ public sealed class LlmClient : IDisposable
                     break;
                 case "assistant" when m.Calls.Count > 0:
                 {
-                    var calls = new JsonArray();
+                    var toolCallArray = new JsonArray();
                     foreach (var c in m.Calls)
                     {
-                        calls.Add(new JsonObject
+                        toolCallArray.Add(new JsonObject
                         {
                             ["id"] = c.Id,
                             ["type"] = "function",
@@ -103,7 +103,7 @@ public sealed class LlmClient : IDisposable
                     {
                         ["role"] = "assistant",
                         ["content"] = m.Text,
-                        ["tool_calls"] = calls
+                        ["tool_calls"] = toolCallArray
                     });
                     break;
                 }
@@ -145,7 +145,7 @@ public sealed class LlmClient : IDisposable
         req.Content = new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json");
 
         var reply = new LlmReply();
-        var calls = new Dictionary<int, ToolCall>();
+        var pendingCalls = new Dictionary<int, ToolCall>();
         var text = new StringBuilder();
 
         using var res = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct);
@@ -192,10 +192,10 @@ public sealed class LlmClient : IDisposable
                     foreach (var item in tc.EnumerateArray())
                     {
                         var index = item.TryGetProperty("index", out var idx) ? idx.GetInt32() : 0;
-                        if (!calls.TryGetValue(index, out var call))
+                        if (!pendingCalls.TryGetValue(index, out var call))
                         {
                             call = new ToolCall();
-                            calls[index] = call;
+                            pendingCalls[index] = call;
                         }
                         if (item.TryGetProperty("id", out var id) && id.ValueKind == JsonValueKind.String)
                             call.Id = id.GetString() ?? call.Id;
@@ -212,7 +212,7 @@ public sealed class LlmClient : IDisposable
         }
 
         reply.Text = text.ToString();
-        reply.Calls = calls.OrderBy(k => k.Key).Select(k => k.Value).Where(c => c.Name.Length > 0).ToList();
+        reply.Calls = pendingCalls.OrderBy(k => k.Key).Select(k => k.Value).Where(c => c.Name.Length > 0).ToList();
         foreach (var c in reply.Calls) if (string.IsNullOrWhiteSpace(c.Arguments)) c.Arguments = "{}";
         reply.OutTokens = Math.Max(1, reply.Text.Length / 4);
         reply.InTokens = Math.Max(1, history.Sum(m => m.Text.Length) / 4);
@@ -238,12 +238,12 @@ public sealed class LlmClient : IDisposable
 
                 case "assistant" when m.Calls.Count > 0:
                 {
-                    var blocks = new JsonArray();
+                    var contentBlocks = new JsonArray();
                     if (!string.IsNullOrWhiteSpace(m.Text))
-                        blocks.Add(new JsonObject { ["type"] = "text", ["text"] = m.Text });
+                        contentBlocks.Add(new JsonObject { ["type"] = "text", ["text"] = m.Text });
                     foreach (var c in m.Calls)
                     {
-                        blocks.Add(new JsonObject
+                        contentBlocks.Add(new JsonObject
                         {
                             ["type"] = "tool_use",
                             ["id"] = c.Id,
@@ -251,14 +251,14 @@ public sealed class LlmClient : IDisposable
                             ["input"] = SafeParse(c.Arguments)
                         });
                     }
-                    messages.Add(new JsonObject { ["role"] = "assistant", ["content"] = blocks });
+                    messages.Add(new JsonObject { ["role"] = "assistant", ["content"] = contentBlocks });
                     break;
                 }
 
                 case "tool":
                 {
                     // tool results are sent as a user turn with tool_result blocks
-                    var blocks = new JsonArray
+                    var resultBlocks = new JsonArray
                     {
                         new JsonObject
                         {
@@ -269,9 +269,9 @@ public sealed class LlmClient : IDisposable
                     };
                     var last = messages.LastOrDefault() as JsonObject;
                     if (last is not null && last["role"]?.GetValue<string>() == "user" && last["content"] is JsonArray existing)
-                        existing.Add(blocks[0]!.DeepClone());
+                        existing.Add(resultBlocks[0]!.DeepClone());
                     else
-                        messages.Add(new JsonObject { ["role"] = "user", ["content"] = blocks });
+                        messages.Add(new JsonObject { ["role"] = "user", ["content"] = resultBlocks });
                     break;
                 }
 
@@ -317,7 +317,7 @@ public sealed class LlmClient : IDisposable
 
         var reply = new LlmReply();
         var text = new StringBuilder();
-        var blocks = new Dictionary<int, ToolCall>();
+        var toolUseBlocks = new Dictionary<int, ToolCall>();
         var partialJson = new Dictionary<int, StringBuilder>();
 
         using var res = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct);
@@ -359,7 +359,7 @@ public sealed class LlmClient : IDisposable
                                 Id = block.TryGetProperty("id", out var idEl) ? idEl.GetString() ?? "" : "",
                                 Name = block.TryGetProperty("name", out var nameEl) ? nameEl.GetString() ?? "" : ""
                             };
-                            blocks[index] = call;
+                            toolUseBlocks[index] = call;
                             partialJson[index] = new StringBuilder();
                         }
                         break;
@@ -382,13 +382,13 @@ public sealed class LlmClient : IDisposable
             }
         }
 
-        foreach (var (index, call) in blocks)
+        foreach (var (index, call) in toolUseBlocks)
         {
             call.Arguments = partialJson.TryGetValue(index, out var sb) && sb.Length > 0 ? sb.ToString() : "{}";
         }
 
         reply.Text = text.ToString();
-        reply.Calls = blocks.OrderBy(k => k.Key).Select(k => k.Value).Where(c => c.Name.Length > 0).ToList();
+        reply.Calls = toolUseBlocks.OrderBy(k => k.Key).Select(k => k.Value).Where(c => c.Name.Length > 0).ToList();
         reply.OutTokens = Math.Max(1, reply.Text.Length / 4);
         reply.InTokens = Math.Max(1, history.Sum(m => m.Text.Length) / 4);
         return reply;
