@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Download, Github } from 'lucide-react'
 import { Brand, Mark } from '../components/Brand'
-import { APP, IS_LOCAL_FILE } from '../lib/app-info'
+import { APP } from '../lib/app-info'
 import { PROVIDERS } from '../lib/models'
 
 function useScrolled() {
@@ -53,7 +53,7 @@ export default function Landing() {
         <section className="hero hero-min">
           <div className="wrap">
             <div className="eyebrow-line">
-              v{APP.version} · Windows · {APP.exeSize}
+              v{APP.version} · {APP.stack} · Windows
             </div>
             <h1>
               Код по разговору.
@@ -61,8 +61,8 @@ export default function Landing() {
               <span className="muted-h">Без лишнего.</span>
             </h1>
             <p className="lede-min">
-              SLURP — среда для вайбкодинга: агент читает репозиторий, пишет план, правит файлы и показывает диффы.
-              Один файл, запускается двойным кликом.
+              SLURP — десктоп-приложение для вайбкодинга: агент читает твой проект, правит настоящие файлы,
+              запускает сборку и тесты. Отдельное окно на C#/WPF, не вкладка в браузере.
             </p>
             <div className="cta-row">
               <a
@@ -75,11 +75,11 @@ export default function Landing() {
                 <Download size={16} /> {APP.primary.label}
               </a>
               <Link to="/app" className="cta-quiet">
-                Открыть в браузере <ArrowRight size={14} />
+                Посмотреть интерфейс <ArrowRight size={14} />
               </Link>
             </div>
             <div className="hero-foot">
-              {APP.primary.note} · без Node.js · работает офлайн
+              {APP.primary.note}
             </div>
           </div>
         </section>
@@ -160,7 +160,7 @@ export default function Landing() {
 
         <section className="wrap get" id="get">
           <h2>Скачать</h2>
-          <p>Windows 10/11 · x64 · {APP.exeSize} · без установки</p>
+          <p>Windows 10/11 · x64 · {APP.stack} · настоящее окно приложения</p>
           <div className="cta-row" style={{ marginTop: 26 }}>
             <a
               className="btn btn-primary btn-lg"
@@ -171,29 +171,27 @@ export default function Landing() {
             >
               <Download size={16} /> {APP.primary.label}
             </a>
-            {IS_LOCAL_FILE ? null : (
-              <a className="cta-quiet" href={APP.zip} target="_blank" rel="noreferrer">
-                исходники (ZIP)
-              </a>
-            )}
+            <a className="cta-quiet" href={APP.zip} target="_blank" rel="noreferrer">
+              весь репозиторий
+            </a>
           </div>
           <ol className="steps-min">
             <li>
-              <span>Скачай SLURP.exe</span>
+              <span>Скачай ZIP {APP.bundleSize} и распакуй в любую папку</span>
             </li>
             <li>
-              <span>Windows покажет предупреждение — «Подробнее» → «Выполнить в любом случае» (файл без платной подписи)</span>
+              <span>
+                Двойной клик по <b>BUILD-WINDOWS.bat</b> — он сам поставит .NET SDK, если его нет, и соберёт приложение
+              </span>
             </li>
             <li>
-              <span>Откроется приложение в браузере. Всё.</span>
+              <span>Рядом появится SLURP.exe и сразу откроется. Дальше exe запускается сам по себе, без сборки</span>
             </li>
           </ol>
           <div className="cmd-box">
-            <span style={{ color: 'var(--muted-dim)' }}>sha256</span>
-            <a href={APP.sums} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
-              SHA256.txt
-            </a>
-            <span style={{ color: 'var(--muted-dim)' }}>рядом с файлом</span>
+            <span style={{ color: 'var(--muted-dim)' }}>сборка</span>
+            <span style={{ color: 'var(--accent)' }}>dotnet publish -c Release -r win-x64</span>
+            <span style={{ color: 'var(--muted-dim)' }}>одна команда внутри bat</span>
           </div>
         </section>
       </main>

@@ -1,0 +1,109 @@
+<Window x:Class="Slurp.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SLURP — настройки" Height="800" Width="840" MinHeight="560" MinWidth="720"
+        Background="{StaticResource Bg}" WindowStartupLocation="CenterOwner"
+        UseLayoutRounding="True" FontFamily="Segoe UI">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="24,18">
+            <StackPanel>
+                <TextBlock Text="Настройки" FontSize="19" FontWeight="SemiBold" />
+                <TextBlock Style="{StaticResource MutedText}" Margin="0,4,0,0"
+                           Text="Всё хранится локально в %APPDATA%\SLURP. Ключи шифруются Windows DPAPI под твою учётную запись." />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,16">
+            <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+
+                <!-- model -->
+                <TextBlock Text="МОДЕЛЬ" Style="{StaticResource CapText}" Margin="0,0,0,8" />
+                <ComboBox x:Name="ModelCombo" Margin="0,0,0,6" />
+                <TextBlock x:Name="ModelHint" Style="{StaticResource CapText}" Margin="2,0,0,0" />
+
+                <!-- persona -->
+                <TextBlock Text="ПОВЕДЕНИЕ" Style="{StaticResource CapText}" Margin="0,22,0,8" />
+                <ComboBox x:Name="PersonaCombo" Margin="0,0,0,10" />
+                <TextBlock Text="СВОИ ПРАВИЛА" Style="{StaticResource CapText}" Margin="0,0,0,6" />
+                <TextBox x:Name="RulesBox" Height="86" AcceptsReturn="True" TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"
+                         FontSize="12.5" />
+                <TextBlock Style="{StaticResource CapText}" Margin="2,6,0,0" TextWrapping="Wrap"
+                           Text="добавляются в системный промпт: стек, стиль, запреты, конвенции проекта" />
+
+                <!-- agent -->
+                <TextBlock Text="АГЕНТ" Style="{StaticResource CapText}" Margin="0,24,0,8" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <Label Content="Уровень автономности" />
+                        <ComboBox x:Name="AutonomyCombo" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <Label Content="Лимит шагов на задачу" />
+                        <TextBox x:Name="StepsBox" />
+                    </StackPanel>
+                </Grid>
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <Label Content="Температура (0 — сухо, 1 — вольно)" />
+                        <TextBox x:Name="TempBox" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
+                        <CheckBox x:Name="SaveKeysCheck" Content="Сохранять ключи между запусками" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- providers -->
+                <TextBlock Text="ПРОВАЙДЕРЫ И КЛЮЧИ" Style="{StaticResource CapText}" Margin="0,26,0,4" />
+                <TextBlock Style="{StaticResource CapText}" TextWrapping="Wrap" Margin="0,0,0,10"
+                           Text="ключ нужен только выбранной модели; локальным серверам (Ollama / LM Studio) ключ не требуется" />
+                <StackPanel x:Name="ProvidersHost" />
+
+                <!-- data -->
+                <TextBlock Text="ДАННЫЕ" Style="{StaticResource CapText}" Margin="0,26,0,8" />
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Открыть папку настроек" Style="{StaticResource GhostButton}" Click="OpenFolder_Click" />
+                    <Button Content="Сбросить ключи" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="ResetKeys_Click" />
+                </StackPanel>
+
+                <TextBlock Text="О ПРОГРАММЕ" Style="{StaticResource CapText}" Margin="0,26,0,8" />
+                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" LineHeight="19">
+                    SLURP 0.9.4 — нативное приложение C# / .NET 8 / WPF.
+                    <LineBreak />
+                    Агент правит файлы на диске, запускает сборку и тесты внутри выбранной папки.
+                    <LineBreak />
+                    Никаких облачных посредников: запросы идут напрямую к API выбранного провайдера.
+                </TextBlock>
+
+                <Border Height="24" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="24,14">
+            <Grid>
+                <TextBlock x:Name="SaveHint" Style="{StaticResource CapText}" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Отмена" Style="{StaticResource GhostButton}" Click="Cancel_Click" />
+                    <Button Content="Сохранить" Style="{StaticResource PrimaryButton}" Margin="8,0,0,0" Click="Save_Click" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

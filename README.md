@@ -1,66 +1,67 @@
 # SLURP
 
-> Код по разговору. Среда для вайбкодинга в духе OpenCode / DeepSeek harness.
+> Код по разговору. Нативное приложение для вайбкодинга на C# / .NET 8 / WPF.
 
-Агент читает репозиторий, пишет план, правит файлы, гоняет тесты и показывает диффы.
-Модель любая: Claude, GPT-5, Gemini, DeepSeek, Kimi, Qwen, Grok, Mistral, OpenRouter —
-или локальная через Ollama. Свои ключи, без посредников.
+Агент открывает твою папку с проектом, читает файлы, правит их на диске, запускает сборку и тесты.
+Модель любая: Claude, GPT-5, Gemini, DeepSeek, Kimi, Qwen, Mistral, OpenRouter — или локальная через
+Ollama / LM Studio. Свои ключи, без посредников.
 
-## Скачать
+## Скачать и запустить
 
-| Что | Файл | Вес |
-| --- | --- | --- |
-| **Приложение для Windows** | [`public/download/SLURP.exe`](public/download/SLURP.exe) | 915 КБ |
-| То же самое одним HTML-файлом (любая ОС) | [`public/download/SLURP.html`](public/download/SLURP.html) | 841 КБ |
+| Что | Файл |
+| --- | --- |
+| Приложение (исходники + сборка в один клик) | [`public/download/SLURP-Windows.zip`](public/download/SLURP-Windows.zip) |
+| Готовый бинарник после локальной сборки | `public/download/SLURP.exe` (`npm run build:win` на Windows) |
 
-Запуск: скачать → двойной клик. Внутри уже всё (интерфейс, движок агента, шрифты).
-Node.js, установщик, интернет и права администратора не нужны.
-SmartScreen покажет «Неизвестный издатель» — файл не подписан платным сертификатом:
-**Подробнее → Выполнить в любом случае**. Контрольные суммы — в `public/download/SHA256.txt`.
+1. Распакуй архив, например в `D:\SLURP`.
+2. Двойной клик по **`BUILD-WINDOWS.bat`** — скрипт поставит .NET SDK 8 через winget, если его нет,
+   и выполнит `dotnet publish -c Release -r win-x64`.
+3. Рядом появится **`SLURP.exe`** и сразу откроется. Дальше exe автономен: .NET внутри,
+   Node.js и права администратора не нужны.
+
+Готового `.exe` в репозитории нет намеренно: WPF компилируется только с Windows-таргетингом, а хост,
+где собирался сайт, — Linux без .NET SDK. Никаких заглушек с расширением `.exe` здесь не лежит.
 
 ## Что внутри приложения
 
-- **Харнесс** — прогон задачи: рассуждение → план → вызовы инструментов → диффы → тесты → итог со стоимостью.
-  Слэш-команды (`/model`, `/undo`, `/cost`), ⌘K-палитра, подтверждение записи, метры контекста и бюджета.
-- **Настройки** — модели (главная + дешёвый субагент), персона и правила, ключи провайдеров,
-  права 12 инструментов, плагины, тема (6 акцентов, плотность, размеры шрифтов), приватность.
-- **Визард первого запуска** — 8 шагов с живым предпросмотром каждого выбора.
-- **Живой режим** — вставил ключ провайдера, и запросы идут в реальный API (SSE-стриминг).
-
-Чего пока нет: доступа к реальным файлам на диске (инструменты симулированы — диффы выглядят
-правильно, файлы не меняются) и нативного окна. Это следующий шаг, интерфейс и движок к нему готовы.
+- **Чат-харнесс** — стриминг ответа, журнал инструментов, счётчик шагов и стоимости, стоп по Esc.
+- **Настоящие инструменты** — `list_files`, `read_file`, `grep`, `write_file`, `apply_patch`, `run_command`
+  в пределах выбранной папки; выход за её границы блокируется.
+- **Автономность** — Ask (подтверждать каждую запись и команду), Auto (файлы сам, shell подтверждай),
+  Yolo (ничего не спрашивать).
+- **Настройки** — модели и провайдеры, поведение (хирург / архитектор / гонщик / ментор / свои правила),
+  лимит шагов, температура, проверка ключа запросом к `/models`.
+- **Ключи** — `%APPDATA%\SLURP\settings.json`, шифрование Windows DPAPI под текущего пользователя.
+- **Первый запуск** — онбординг: модель → ключ → папка.
 
 ## Структура
 
 ```
-public/download/       готовые сборки: SLURP.exe, SLURP.html, SHA256.txt
-native/launcher.c      запускатор для .exe: распаковывает HTML во %TEMP% и открывает браузер
-scripts/build-single.mjs   собирает один самодостаточный HTML
-scripts/build-exe.mjs      приклеивает HTML к .exe (stub + payload + футер SLURPEXE)
-src/pages/             Landing, Download, Harness, Settings, Onboarding
-src/lib/               models, plugins, store, agent (движок прогона), llm (стриминг), app-info
-src/styles/            base.css, site.css, app.css
+desktop/Slurp.Desktop/     приложение C#/WPF (net8.0-windows, single-file publish)
+  MainWindow.xaml(.cs)     окно: сессии, чат, журнал инструментов, онбординг
+  SettingsWindow.xaml(.cs) модели, провайдеры, ключи, поведение агента
+  Agent.cs                 цикл: модель → инструменты → результат → снова
+  Llm.cs                   стриминг OpenAI-совместимых API и Anthropic Messages
+  Tools.cs                 файловые и shell-инструменты с защитой путей
+  SettingsStore.cs         настройки + DPAPI-шифрование ключей
+BUILD-WINDOWS.bat          сборка SLURP.exe одним двойным кликом
+scripts/build-wpf.mjs      dotnet publish → public/download/SLURP.exe + SHA256.txt
+scripts/pack-windows.mjs   исходники + bat → public/download/SLURP-Windows.zip
+src/pages/                 Landing, Download, Harness, Settings, Onboarding (сайт)
+src/lib/                   models, plugins, store, app-info, llm (веб-демо)
 ```
 
-## Разработка
+## Сайт и разработка
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm run build    # типы + прод-сборка в dist/
-npm run build:app   # пересобрать public/download/SLURP.html + SLURP.exe + SHA256.txt
+npm run dev         # http://localhost:5173
+npm run build       # tsc --noEmit + vite build
+npm run build:app   # пересобрать ZIP для скачивания
+npm run build:win   # собрать public/download/SLURP.exe (нужен .NET SDK 8)
 ```
 
-Стек: React 18 + TypeScript + Vite, своя дизайн-система без UI-китов, self-hosted variable-шрифты.
+Стек сайта: React 18 + TypeScript + Vite, своя дизайн-система без UI-китов, self-hosted variable-шрифты.
+Стек приложения: .NET 8, WPF, System.Text.Json, HttpClient (SSE), DPAPI, `PublishSingleFile`.
 
-## Как собирается .exe
-
-`native/launcher.c` — 120 строк на C: читает сам себя, находит в конце футер `SLURPEXE`,
-достаёт HTML-payload, пишет его во `%TEMP%` и открывает браузером. Сборка кросс-компилятором:
-
-```bash
-zig cc -target x86_64-windows-gnu -O2 -s -Wl,--subsystem,windows \
-       -o native/SLURP-stub.exe native/launcher.c -lshell32 -luser32
-```
-
-`npm run build:app` дописывает HTML к стабу и проверяет, что payload читается обратно байт в байт.
+Подробная пошаговая инструкция — в [RUN.md](RUN.md).

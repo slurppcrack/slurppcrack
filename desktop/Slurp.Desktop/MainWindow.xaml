@@ -1,0 +1,269 @@
+<Window x:Class="Slurp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SLURP" Height="860" Width="1320" MinHeight="620" MinWidth="1000"
+        Background="{StaticResource Bg}"
+        WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True"
+        FontFamily="Segoe UI">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="252" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="296" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ============ left rail ============ -->
+        <Border Grid.Column="0" Background="#08090A" BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0">
+            <Grid Margin="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal" Margin="4,4,0,16">
+                    <Border Width="24" Height="24" CornerRadius="7" Background="{StaticResource Accent}" VerticalAlignment="Center">
+                        <TextBlock Text="s" Foreground="#0A0F06" FontWeight="Bold" FontSize="14"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="slurp" FontSize="15" FontWeight="SemiBold" Margin="9,0,0,0" VerticalAlignment="Center" />
+                    <TextBlock Text="0.9.4" Style="{StaticResource CapText}" Margin="8,2,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Margin="0,0,0,14">
+                    <TextBlock Text="РАБОЧАЯ ПАПКА" Style="{StaticResource CapText}" Margin="4,0,0,6" />
+                    <Button x:Name="PickFolderButton" Style="{StaticResource GhostButton}" Click="PickFolder_Click"
+                            HorizontalContentAlignment="Left">
+                        <StackPanel>
+                            <TextBlock x:Name="WorkspaceName" Text="выбрать папку…" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                            <TextBlock x:Name="WorkspacePath" Text="" Style="{StaticResource CapText}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="OpenFolderButton" Content="Открыть в проводнике" Style="{StaticResource GhostButton}"
+                            Margin="0,6,0,0" Click="OpenFolder_Click" IsEnabled="False" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="2">
+                    <TextBlock Text="ЖУРНАЛ ИНСТРУМЕНТОВ" Style="{StaticResource CapText}" Margin="4,6,0,6" />
+                    <ScrollViewer x:Name="LogScroll" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="ToolLog">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource ToolLine}">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" FontFamily="Consolas" FontSize="11"
+                                                       Foreground="#C9D2CD" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding Result}" FontFamily="Consolas" FontSize="10.5"
+                                                       Foreground="{StaticResource Muted}" TextWrapping="Wrap"
+                                                       MaxHeight="64" Margin="0,3,0,0" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Margin="0,10,0,0">
+                    <Button Content="Настройки" Style="{StaticResource GhostButton}" Click="Settings_Click" />
+                    <TextBlock Style="{StaticResource CapText}" Margin="4,8,0,0" TextWrapping="Wrap"
+                               Text="ключи шифруются DPAPI под текущего пользователя" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ============ center: chat ============ -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="16,10">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="SessionTitle" Text="Новая сессия" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <Border Background="#16281A" CornerRadius="4" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="StatusChip" Text="готов" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource Accent}" />
+                        </Border>
+                    </StackPanel>
+                    <Button x:Name="StopButton" Content="Стоп" Style="{StaticResource GhostButton}" HorizontalAlignment="Right"
+                            Visibility="Collapsed" Click="Stop_Click" />
+                </Grid>
+            </Border>
+
+            <ScrollViewer x:Name="ChatScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="18,12">
+                <ItemsControl x:Name="Messages">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Border x:Name="userBubble" Style="{StaticResource UserBubble}" Visibility="Collapsed">
+                                    <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="13" />
+                                </Border>
+                                <Border x:Name="assistantBlock" Style="{StaticResource AssistantBlock}" Visibility="Collapsed">
+                                    <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="13" LineHeight="20" />
+                                </Border>
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                    <Setter TargetName="userBubble" Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsUser}" Value="False">
+                                    <Setter TargetName="assistantBlock" Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="16,12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Background="#0E1112" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="10">
+                        <Grid>
+                            <TextBlock x:Name="Watermark" Text="Опиши задачу: «добавь валидацию в форму логина и прогони тесты»"
+                                       Foreground="#5E6663" FontSize="13" Margin="12,10,12,0" VerticalAlignment="Top"
+                                       TextWrapping="Wrap" IsHitTestVisible="False" />
+                            <TextBox x:Name="Composer" Background="Transparent" BorderThickness="0" AcceptsReturn="True"
+                                     TextWrapping="Wrap" MinHeight="48" MaxHeight="160" VerticalScrollBarVisibility="Auto"
+                                     Padding="11,9" FontFamily="Segoe UI" FontSize="13"
+                                     KeyDown="Composer_KeyDown" TextChanged="Composer_TextChanged"
+                                     GotKeyboardFocus="Composer_GotKeyboardFocus" LostKeyboardFocus="Composer_LostKeyboardFocus" />
+                        </Grid>
+                    </Border>
+
+                    <Grid Grid.Row="1" Margin="0,8,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox x:Name="ModelCombo" Width="268" SelectionChanged="ModelCombo_SelectionChanged" />
+                            <ComboBox x:Name="AutonomyCombo" Width="168" Margin="8,0,0,0" SelectionChanged="Autonomy_SelectionChanged" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock x:Name="CostText" Style="{StaticResource CapText}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Button x:Name="SendButton" Content="Отправить  ·  Ctrl+Enter" Style="{StaticResource PrimaryButton}" Click="Send_Click" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ============ right panel ============ -->
+        <Border Grid.Column="2" Background="#0A0C0D" BorderBrush="{StaticResource Line}" BorderThickness="1,0,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14">
+                <StackPanel>
+                    <TextBlock Text="СЕССИЯ" Style="{StaticResource CapText}" Margin="0,0,0,8" />
+                    <Border Style="{StaticResource ToolLine}" Margin="0,0,0,10">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="модель" Style="{StaticResource MutedText}" />
+                                <TextBlock x:Name="InfoModel" Text="—" Style="{StaticResource CapText}" HorizontalAlignment="Right" Foreground="{StaticResource Text}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="шагов" Style="{StaticResource MutedText}" />
+                                <TextBlock x:Name="InfoSteps" Text="0" Style="{StaticResource CapText}" HorizontalAlignment="Right" Foreground="{StaticResource Text}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="токены вход/выход" Style="{StaticResource MutedText}" />
+                                <TextBlock x:Name="InfoTokens" Text="0 / 0" Style="{StaticResource CapText}" HorizontalAlignment="Right" Foreground="{StaticResource Text}" />
+                            </Grid>
+                            <Grid>
+                                <TextBlock Text="оценка стоимости" Style="{StaticResource MutedText}" />
+                                <TextBlock x:Name="InfoCost" Text="$0.0000" Style="{StaticResource CapText}" HorizontalAlignment="Right" Foreground="{StaticResource Accent}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="ЧТО УМЕЕТ" Style="{StaticResource CapText}" Margin="0,6,0,8" />
+                    <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" LineHeight="18"
+                               Text="Читает и правит реальные файлы в выбранной папке, ищет по репозиторию, запускает сборку, тесты и git. Каждый опасный шаг спрашивает разрешение — режим меняется в настройках." />
+
+                    <TextBlock Text="АВТОНОМНОСТЬ" Style="{StaticResource CapText}" Margin="0,16,0,8" />
+                    <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" LineHeight="18">
+                        <Run Text="Ask" Foreground="#C9D2CD" /> — спрашивает перед каждой записью и командой.<LineBreak />
+                        <Run Text="Auto" Foreground="#C9D2CD" /> — сам правит файлы, спрашивает только перед shell.<LineBreak />
+                        <Run Text="Yolo" Foreground="#C9D2CD" /> — не спрашивает ничего. Для экспериментов.
+                    </TextBlock>
+
+                    <TextBlock Text="ГОРЯЧИЕ КЛАВИШИ" Style="{StaticResource CapText}" Margin="0,16,0,8" />
+                    <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" LineHeight="18">
+                        Ctrl+Enter — отправить<LineBreak />
+                        Esc — остановить агента<LineBreak />
+                        Ctrl+O — выбрать папку
+                    </TextBlock>
+
+                    <TextBlock Text="ФАЙЛЫ" Style="{StaticResource CapText}" Margin="0,16,0,8" />
+                    <TextBlock Style="{StaticResource CapText}" TextWrapping="Wrap" LineHeight="16"
+                               Text="%APPDATA%\SLURP\settings.json" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- ============ first-run overlay ============ -->
+        <Grid x:Name="OnboardingOverlay" Grid.ColumnSpan="3" Background="#F208090A" Visibility="Collapsed">
+            <Border Width="580" Background="#0D1011" BorderBrush="{StaticResource Line}" BorderThickness="1"
+                    CornerRadius="16" Padding="30" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel>
+                    <Border Background="#16281A" CornerRadius="4" Padding="7,3" HorizontalAlignment="Left">
+                        <TextBlock Text="ПЕРВЫЙ ЗАПУСК" Style="{StaticResource CapText}" Foreground="{StaticResource Accent}" />
+                    </Border>
+                    <TextBlock Text="Агент, который живёт в твоей папке" FontSize="23" FontWeight="SemiBold" Margin="0,14,0,8" />
+                    <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" LineHeight="20"
+                               Text="SLURP — отдельное десктоп-приложение на C#/WPF. Он читает и правит настоящие файлы у тебя на диске, запускает сборку и тесты. Никакой браузерной обёртки." />
+
+                    <StackPanel Margin="0,20,0,0">
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="26" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="1" Style="{StaticResource CapText}" Foreground="{StaticResource Accent}" FontSize="11" />
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Выбери модель" FontSize="13" FontWeight="SemiBold" />
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap"
+                                           Text="Claude, GPT, DeepSeek, Gemini, Kimi, Qwen, Mistral, OpenRouter или локальный Ollama." />
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="26" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="2" Style="{StaticResource CapText}" Foreground="{StaticResource Accent}" FontSize="11" />
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Вставь ключ провайдера" FontSize="13" FontWeight="SemiBold" />
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap"
+                                           Text="Ключ хранится только на этом компьютере и шифруется Windows DPAPI." />
+                            </StackPanel>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="26" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="3" Style="{StaticResource CapText}" Foreground="{StaticResource Accent}" FontSize="11" />
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Укажи папку проекта" FontSize="13" FontWeight="SemiBold" />
+                                <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap"
+                                           Text="Агент работает только внутри неё и не выходит за границы папки." />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
+                        <Button Content="Настройки и ключи" Style="{StaticResource PrimaryButton}" Click="OnboardingSettings_Click" />
+                        <Button Content="Выбрать папку" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="OnboardingFolder_Click" />
+                        <Button Content="Пропустить" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="OnboardingSkip_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

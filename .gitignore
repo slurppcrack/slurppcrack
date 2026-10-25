@@ -7,3 +7,8 @@ dist-ssr
 *.log
 .DS_Store
 .vite
+
+# .NET / WPF build output
+build/
+desktop/**/bin/
+desktop/**/obj/

@@ -3,15 +3,16 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "SLURP — the agentic coding environment for vibe coding",
+  "description": "SLURP — agentic coding desktop app (C#/WPF) + download site",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "start": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "build:app": "node scripts/build-single.mjs && node scripts/build-exe.mjs",
-    "build:exe": "node scripts/build-exe.mjs"
+    "build:app": "node scripts/pack-windows.mjs",
+    "build:win": "node scripts/build-wpf.mjs",
+    "build:all": "node scripts/pack-windows.mjs && node scripts/build-wpf.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.1.0",
