@@ -48,11 +48,14 @@ OpenRouter) или локальная (Ollama, LM Studio), вплоть до п�
 
 ## Запуск
 
+Подробная пошаговая инструкция для Windows/macOS/Linux (включая вариант без Git и разбор типичных
+ошибок) — в **[RUN.md](RUN.md)**. Коротко:
+
 ```bash
 npm install
 npm run dev      # http://localhost:5173
 npm run build    # tsc --noEmit + vite build
-npm run preview
+npm run preview  # предпросмотр собранного на :4173
 ```
 
 Стек: React 18 + TypeScript + Vite, react-router, lucide-react, self-hosted variable-шрифты
