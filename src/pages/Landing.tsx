@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Download, Github } from 'lucide-react'
 import { Brand, Mark } from '../components/Brand'
-import { APP } from '../lib/app-info'
+import { APP, IS_LOCAL_FILE } from '../lib/app-info'
 import { PROVIDERS } from '../lib/models'
 
 function useScrolled() {
@@ -59,15 +59,21 @@ export default function Landing() {
               Один файл, запускается двойным кликом.
             </p>
             <div className="cta-row">
-              <a className="btn btn-primary btn-lg" href={APP.exe} download>
-                <Download size={16} /> Скачать SLURP.exe
+              <a
+                className="btn btn-primary btn-lg"
+                href={APP.primary.href}
+                download={APP.primary.external ? undefined : true}
+                target={APP.primary.external ? '_blank' : undefined}
+                rel={APP.primary.external ? 'noreferrer' : undefined}
+              >
+                <Download size={16} /> {APP.primary.label}
               </a>
               <Link to="/app" className="cta-quiet">
                 Открыть в браузере <ArrowRight size={14} />
               </Link>
             </div>
             <div className="hero-foot">
-              Без установки · без Node.js · работает офлайн
+              {APP.primary.note} · без Node.js · работает офлайн
             </div>
           </div>
         </section>
@@ -150,12 +156,20 @@ export default function Landing() {
           <h2>Скачать</h2>
           <p>Windows 10/11 · x64 · {APP.exeSize} · без установки</p>
           <div className="cta-row" style={{ marginTop: 26 }}>
-            <a className="btn btn-primary btn-lg" href={APP.exe} download>
-              <Download size={16} /> SLURP.exe
+            <a
+              className="btn btn-primary btn-lg"
+              href={APP.primary.href}
+              download={APP.primary.external ? undefined : true}
+              target={APP.primary.external ? '_blank' : undefined}
+              rel={APP.primary.external ? 'noreferrer' : undefined}
+            >
+              <Download size={16} /> {APP.primary.label}
             </a>
-            <a className="cta-quiet" href={APP.zip} target="_blank" rel="noreferrer">
-              исходники (ZIP)
-            </a>
+            {IS_LOCAL_FILE ? null : (
+              <a className="cta-quiet" href={APP.zip} target="_blank" rel="noreferrer">
+                исходники (ZIP)
+              </a>
+            )}
           </div>
           <ol className="steps-min">
             <li>

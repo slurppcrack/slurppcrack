@@ -3,7 +3,7 @@ import { ArrowLeft, Check, Download as DownloadIcon, Github } from 'lucide-react
 import { Footer } from './Landing'
 import { Brand } from '../components/Brand'
 import { Reveal } from '../components/ui'
-import { APP } from '../lib/app-info'
+import { APP, IS_LOCAL_FILE } from '../lib/app-info'
 
 export default function Download() {
   return (
@@ -37,8 +37,14 @@ export default function Download() {
           </p>
 
           <div className="cta-row" style={{ marginTop: 30 }}>
-            <a className="btn btn-primary btn-lg" href={APP.exe} download>
-              <DownloadIcon size={16} /> Скачать {APP.exeFile}
+            <a
+              className="btn btn-primary btn-lg"
+              href={APP.primary.href}
+              download={APP.primary.external ? undefined : true}
+              target={APP.primary.external ? '_blank' : undefined}
+              rel={APP.primary.external ? 'noreferrer' : undefined}
+            >
+              <DownloadIcon size={16} /> {APP.primary.label}
             </a>
             <a className="cta-quiet" href={APP.zip} target="_blank" rel="noreferrer">
               ZIP со всем репозиторием

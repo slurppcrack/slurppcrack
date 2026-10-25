@@ -29,6 +29,8 @@ if (stub.subarray(0, 2).toString() !== 'MZ') throw new Error(`${STUB} is not a P
 
 const exe = Buffer.concat([stub, html, footer(html.length)])
 await fs.writeFile(OUT, exe)
+// a copy at the repo root: after unzipping the archive this is the first thing you see
+await fs.writeFile('SLURP.exe', exe)
 
 // --- verify exactly the way the C launcher reads it ---
 const built = await fs.readFile(OUT)
