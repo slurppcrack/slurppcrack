@@ -9,7 +9,7 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 
 const TMP = 'dist-single/_tmp'
-const OUT = 'dist-single'
+const OUT = 'public/download'
 const NAME = 'SLURP.html'
 
 const mime = {
@@ -92,11 +92,11 @@ const { size } = await fs.stat(target)
 const kb = Math.round(size / 1024)
 
 // copy into the release folder that ships with the repo + publish the checksum separately
-await fs.mkdir('release', { recursive: true })
-await fs.copyFile(target, path.join('release', 'SLURP.html'))
+await fs.mkdir('public/download', { recursive: true })
+await fs.copyFile(target, path.join('public/download', 'SLURP.html'))
 const sha = createHash('sha256').update(await fs.readFile(target)).digest('hex')
 await fs.writeFile(
-  path.join('release', 'SHA256.txt'),
+  path.join('public/download', 'SHA256.txt'),
   `${sha}  SLURP.html\n# SLURP ${kb} KB · built ${new Date().toISOString().slice(0, 10)}\n# verify:  certutil -hashfile SLURP.html SHA256   (Windows)\n#          shasum -a 256 SLURP.html              (macOS / Linux)\n`,
   'utf8',
 )
@@ -107,4 +107,4 @@ const infoPath = 'src/lib/app-info.ts'
 const info = await fs.readFile(infoPath, 'utf8')
 const nextInfo = info.replace(/size: '[^']*'/, `size: '${kb} KB'`)
 if (nextInfo !== info) await fs.writeFile(infoPath, nextInfo, 'utf8')
-console.log('✓ release/SLURP.html + release/SHA256.txt updated')
+console.log('✓ public/download/SLURP.html + SHA256.txt updated')
