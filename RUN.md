@@ -77,6 +77,37 @@ npm run dev     # запускает dev-сервер
 | `/settings` | Все настройки: модели, персона, ключи, права инструментов, плагины, тема |
 | `/setup` | Визард первого запуска из 8 шагов |
 
+### Если терминал пишет «не является внутренней или внешней командой»
+
+Это `cmd.exe` (чёрное окно DOS). В нём нет `unzip` и `git`, а команды PowerShell он не понимает.
+Выбери любой из трёх путей.
+
+**А. Совсем без терминала (самый надёжный).** Скачай архив в браузере:
+
+```
+https://github.com/slurppcrack/slurppcrack/archive/refs/heads/arena/630fbf79-slurppcrack.zip
+```
+
+Правый клик по файлу → «Извлечь все» → зайди в распакованную папку → **двойной клик по `start.cmd`**.
+Дальше скрипт всё сделает сам: проверит Node, поставит зависимости, запустит сервер и откроет браузер.
+
+**Б. Одна строка для `cmd.exe`** — только встроенные средства Windows (PowerShell 5.1 + Expand-Archive):
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol='Tls12'; $ProgressPreference='SilentlyContinue'; Invoke-WebRequest -Uri 'https://github.com/slurppcrack/slurppcrack/archive/refs/heads/arena/630fbf79-slurppcrack.zip' -OutFile 'slurp.zip'; Expand-Archive -Force 'slurp.zip' -DestinationPath '.'; Set-Location 'slurppcrack-arena-630fbf79-slurppcrack'; .\start.cmd"
+```
+
+**В. Открыть настоящий PowerShell.** Win + X → «Терминал» (или «Windows PowerShell»), затем:
+
+```powershell
+curl.exe -L https://github.com/slurppcrack/slurppcrack/archive/refs/heads/arena/630fbf79-slurppcrack.zip -o slurp.zip; Expand-Archive -Force slurp.zip -DestinationPath .; cd slurppcrack-arena-630fbf79-slurppcrack; .\install.ps1
+```
+
+> `curl.exe` (именно с `.exe`) есть в Windows 10 1803+ и Windows 11. Если его нет — используй способ Б.
+
+**Как понять, какое окно открыто:** в `cmd.exe` приглашение выглядит как `C:\Users\Ты>`,
+в PowerShell — `PS C:\Users\Ты>`. Команды у них разные, и это главная причина таких ошибок.
+
 ### Что обязательно попробовать в `/app`
 
 1. Нажми подсказку **«Harden the auth flow»** → пойдёт рассуждение, план, tool-calls, диффы, тесты, карточка итога.
