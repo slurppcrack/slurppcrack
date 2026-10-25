@@ -79,7 +79,7 @@ const human = (statSync(target).size / 1024 / 1024).toFixed(1) + ' MB'
 writeFileSync(
   join(outDir, 'SHA256.txt'),
   [
-    'SLURP 0.9.4 — Windows x64, self-contained WPF build',
+    'SLURP 0.9.5 — Windows x64, self-contained WPF build',
     '',
     `${sha}  SLURP.exe  (${human})`,
     '',

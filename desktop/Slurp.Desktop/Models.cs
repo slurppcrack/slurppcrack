@@ -126,3 +126,20 @@ public sealed class ToolLogEntry
 
     [JsonIgnore] public string Title => $"{Tool}  {Detail}";
 }
+
+/// <summary>One chat session: its own transcript, tool log and agent conversation.</summary>
+public sealed class Session
+{
+    public string Id { get; init; } = Guid.NewGuid().ToString("n");
+    public string Title { get; set; } = "Новая сессия";
+    public string Subtitle { get; set; } = "";
+    public DateTime CreatedAt { get; init; } = DateTime.Now;
+
+    public ObservableCollection<ChatTurn> Turns { get; } = new();
+    public ObservableCollection<ToolLogEntry> Log { get; } = new();
+    public List<LlmMessage> Conversation { get; } = new();
+
+    public int Steps { get; set; }
+    public int InTokens { get; set; }
+    public int OutTokens { get; set; }
+}

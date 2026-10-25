@@ -85,7 +85,7 @@
 
                 <TextBlock Text="О ПРОГРАММЕ" Style="{StaticResource CapText}" Margin="0,26,0,8" />
                 <TextBlock Style="{StaticResource MutedText}" TextWrapping="Wrap" LineHeight="19">
-                    SLURP 0.9.4 — нативное приложение C# / .NET 8 / WPF.
+                    SLURP 0.9.5 — нативное приложение C# / .NET 8 / WPF.
                     <LineBreak />
                     Агент правит файлы на диске, запускает сборку и тесты внутри выбранной папки.
                     <LineBreak />

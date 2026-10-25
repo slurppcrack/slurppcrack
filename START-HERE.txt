@@ -1,4 +1,4 @@
-SLURP 0.9.4 — приложение для Windows
+SLURP 0.9.5 — приложение для Windows
 ====================================
 
 Это отдельное десктоп-приложение на C# / .NET 8 / WPF. Оно открывает твою
@@ -48,5 +48,5 @@ Esc — остановить агента.
   npm run dev     → http://localhost:5173
 
 Пересобрать архив для скачивания:
-  npm run build:app        → public/download/SLURP-Windows-r2.zip
+  npm run build:app        → public/download/SLURP-Windows-r3.zip
   npm run build:win        → public/download/SLURP.exe (нужен .NET SDK 8)

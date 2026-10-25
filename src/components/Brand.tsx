@@ -31,7 +31,7 @@ export function Brand({ to = '/' }: { to?: string }) {
           letterSpacing: '0.04em',
         }}
       >
-        v0.9.4
+        v0.9.5
       </span>
     </Link>
   )

@@ -639,7 +639,7 @@ export default function Settings() {
               <Group title="About">
                 <Row title="Version" desc="Open beta, signed and notarised. Channel: stable.">
                   <span className="mono" style={{ fontSize: 11.5, color: 'var(--muted)' }}>
-                    0.9.4 (build 2026.10.23)
+                    0.9.5 (build 2026.10.25)
                   </span>
                 </Row>
                 <Row title="Reset all settings" desc="Back to factory defaults, including model choice, persona and tools.">

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Packs the Windows source bundle that the website serves:
- *   public/download/SLURP-Windows.zip
+ *   public/download/SLURP-Windows-r3.zip
  *
  * Contents (what a person needs to get a real SLURP.exe):
- *   SLURP-0.9.4/START-HERE.txt
- *   SLURP-0.9.4/BUILD-WINDOWS.bat
- *   SLURP-0.9.4/desktop/Slurp.Desktop/**            (C# / WPF source)
- *   SLURP-0.9.4/desktop/Slurp.Desktop/*.csproj
+ *   SLURP-0.9.5/START-HERE.txt
+ *   SLURP-0.9.5/BUILD-WINDOWS.bat
+ *   SLURP-0.9.5/desktop/Slurp.Desktop/**            (C# / WPF source)
+ *   SLURP-0.9.5/desktop/Slurp.Desktop/*.csproj
  *
  * Usage: node scripts/pack-windows.mjs
  */
@@ -17,12 +17,12 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const version = '0.9.4'
+const version = '0.9.5'
 const bundleName = `SLURP-${version}`
 const stageRoot = join(root, 'build', 'zip')
 const stage = join(stageRoot, bundleName)
 const outDir = join(root, 'public', 'download')
-const zipPath = join(outDir, 'SLURP-Windows-r2.zip')
+const zipPath = join(outDir, 'SLURP-Windows-r3.zip')
 
 const SKIP = new Set(['bin', 'obj', '.vs'])
 
@@ -67,4 +67,4 @@ if (zip.error || zip.status !== 0) {
 }
 
 rmSync(stageRoot, { recursive: true, force: true })
-console.log(`  public/download/SLURP-Windows-r2.zip  ←  desktop/Slurp.Desktop + BUILD-WINDOWS.bat + START-HERE.txt`)
+console.log(`  public/download/SLURP-Windows-r3.zip  ←  desktop/Slurp.Desktop + BUILD-WINDOWS.bat + START-HERE.txt`)

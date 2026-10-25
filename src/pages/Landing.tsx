@@ -74,9 +74,9 @@ export default function Landing() {
               >
                 <Download size={16} /> {APP.primary.label}
               </a>
-              <Link to="/app" className="cta-quiet">
+              <a href="/design.html" target="_blank" rel="noreferrer" className="cta-quiet">
                 Посмотреть интерфейс <ArrowRight size={14} />
-              </Link>
+              </a>
             </div>
             <div className="hero-foot">
               {APP.primary.note}

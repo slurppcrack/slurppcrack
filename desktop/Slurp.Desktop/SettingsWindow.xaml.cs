@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace Slurp;
@@ -23,7 +25,27 @@ public partial class SettingsWindow : Window
 
     private static readonly string[] PersonaIds = { "surgeon", "architect", "racer", "mentor", "custom" };
 
+    [DllImport("dwmapi.dll", PreserveSig = true)]
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
+
     public AppSettings Settings { get; }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        // paint the native caption dark so the dialog does not flash a white bar
+        try
+        {
+            var handle = new WindowInteropHelper(this).Handle;
+            var dark = 1;
+            if (DwmSetWindowAttribute(handle, 20, ref dark, sizeof(int)) != 0)
+                DwmSetWindowAttribute(handle, 19, ref dark, sizeof(int));
+        }
+        catch
+        {
+            // older Windows: keep the default caption
+        }
+    }
 
     public SettingsWindow(AppSettings settings)
     {
