@@ -1,5 +1,5 @@
-4690f38c092cc043f890fa5989987940f8e513e5800f4b4dc11e2505aa193b3c  SLURP.exe
-915fdd6977dfb13db0e1c834a39e83cbd69bd652402cf2ca92d8ecea5b049120  SLURP.html
+2b3002207bc3935ff4cf5dfe76a0428699ed891d3091dcc2e45e26898ea11627  SLURP.exe
+9adaced33c5d1ac99cb5bfd13a5d10dd3349581e05dc5f147405c2543e88eb52  SLURP.html
 # SLURP 915 KB exe · built 2026-10-25
 # verify:  certutil -hashfile SLURP.exe SHA256    (Windows)
 #          shasum -a 256 SLURP.exe               (macOS / Linux)

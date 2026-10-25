@@ -23,7 +23,7 @@ export const APP = {
   exeFile: 'SLURP.exe',
   exeSize: '915 KB',
   htmlFile: 'SLURP.html',
-  htmlSize: '841 KB',
+  htmlSize: '842 KB',
 
   /** Windows app */
   get exe() {

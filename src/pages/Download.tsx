@@ -18,7 +18,13 @@ export default function Download() {
             <Link to="/" className="nav-link">
               Назад
             </Link>
-            <a className="btn btn-primary btn-sm" href={APP.exe} download>
+            <a
+              className="btn btn-primary btn-sm"
+              href={APP.primary.href}
+              download={APP.primary.external ? undefined : true}
+              target={APP.primary.external ? '_blank' : undefined}
+              rel={APP.primary.external ? 'noreferrer' : undefined}
+            >
               <DownloadIcon size={13} /> Скачать
             </a>
           </div>

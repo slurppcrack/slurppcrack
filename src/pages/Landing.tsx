@@ -36,7 +36,13 @@ export default function Landing() {
             <a className="nav-link nav-icon" href={APP.repo} target="_blank" rel="noreferrer" aria-label="GitHub">
               <Github size={15} />
             </a>
-            <a className="btn btn-primary btn-sm" href={APP.exe} download>
+            <a
+              className="btn btn-primary btn-sm"
+              href={APP.primary.href}
+              download={APP.primary.external ? undefined : true}
+              target={APP.primary.external ? '_blank' : undefined}
+              rel={APP.primary.external ? 'noreferrer' : undefined}
+            >
               <Download size={13} /> Скачать
             </a>
           </div>
