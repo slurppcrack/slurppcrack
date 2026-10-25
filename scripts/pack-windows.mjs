@@ -22,7 +22,7 @@ const bundleName = `SLURP-${version}`
 const stageRoot = join(root, 'build', 'zip')
 const stage = join(stageRoot, bundleName)
 const outDir = join(root, 'public', 'download')
-const zipPath = join(outDir, 'SLURP-Windows.zip')
+const zipPath = join(outDir, 'SLURP-Windows-r2.zip')
 
 const SKIP = new Set(['bin', 'obj', '.vs'])
 
@@ -44,8 +44,17 @@ for (const file of ['BUILD-WINDOWS.bat', 'START-HERE.txt', 'RUN.md']) {
 }
 
 writeFileSync(
-  join(stage, 'ВЕРСИЯ.txt'),
-  `SLURP ${version}\nсобрано из ветки ${process.env.GITHUB_REF_NAME ?? 'arena/630fbf79-slurppcrack'}\n`,
+  join(stage, 'BUILD.txt'),
+  [
+    `SLURP ${version} — Windows source bundle`,
+    `собрано: ${new Date().toISOString()}`,
+    `ветка:   ${process.env.GITHUB_REF_NAME ?? 'arena/630fbf79-slurppcrack'}`,
+    `коммит:  ${process.env.GITHUB_SHA ?? 'local'}`,
+    '',
+    'Версия исходников проверяется так (должна быть строка с toolCallArray):',
+    '  findstr toolCallArray desktop\\Slurp.Desktop\\Llm.cs',
+    '',
+  ].join('\n'),
   'utf8',
 )
 
@@ -58,4 +67,4 @@ if (zip.error || zip.status !== 0) {
 }
 
 rmSync(stageRoot, { recursive: true, force: true })
-console.log(`  public/download/SLURP-Windows.zip  ←  desktop/Slurp.Desktop + BUILD-WINDOWS.bat + START-HERE.txt`)
+console.log(`  public/download/SLURP-Windows-r2.zip  ←  desktop/Slurp.Desktop + BUILD-WINDOWS.bat + START-HERE.txt`)

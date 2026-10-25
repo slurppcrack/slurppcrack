@@ -29,8 +29,8 @@ export const APP = {
   version: '0.9.4',
   stack: 'C# · .NET 8 · WPF',
   exeFile: 'SLURP.exe',
-  bundle: 'SLURP-Windows.zip',
-  bundleSize: '38 КБ',
+  bundle: 'SLURP-Windows-r2.zip',
+  bundleSize: '39 КБ',
   /** shown in eyebrows instead of a byte size we cannot promise */
   exeSize: 'исходники + сборка в один клик',
 
@@ -38,7 +38,7 @@ export const APP = {
     return 'download/SLURP.exe'
   },
   get bundleUrl() {
-    return 'download/SLURP-Windows.zip'
+    return 'download/SLURP-Windows-r2.zip'
   },
   /** what the big button actually does, depending on how we are running */
   get primary(): { href: string; label: string; note: string; external: boolean } {

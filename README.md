@@ -10,7 +10,7 @@ Ollama / LM Studio. Свои ключи, без посредников.
 
 | Что | Файл |
 | --- | --- |
-| Приложение (исходники + сборка в один клик) | [`public/download/SLURP-Windows.zip`](public/download/SLURP-Windows.zip) |
+| Приложение (исходники + сборка в один клик) | [`public/download/SLURP-Windows-r2.zip`](public/download/SLURP-Windows-r2.zip) |
 | Готовый бинарник после локальной сборки | `public/download/SLURP.exe` (`npm run build:win` на Windows) |
 
 1. Распакуй архив, например в `D:\SLURP`.
@@ -46,7 +46,7 @@ desktop/Slurp.Desktop/     приложение C#/WPF (net8.0-windows, single-f
   SettingsStore.cs         настройки + DPAPI-шифрование ключей
 BUILD-WINDOWS.bat          сборка SLURP.exe одним двойным кликом
 scripts/build-wpf.mjs      dotnet publish → public/download/SLURP.exe + SHA256.txt
-scripts/pack-windows.mjs   исходники + bat → public/download/SLURP-Windows.zip
+scripts/pack-windows.mjs   исходники + bat → public/download/SLURP-Windows-r2.zip
 src/pages/                 Landing, Download, Harness, Settings, Onboarding (сайт)
 src/lib/                   models, plugins, store, app-info, llm (веб-демо)
 ```

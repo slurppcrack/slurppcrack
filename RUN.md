@@ -5,7 +5,7 @@ SLURP — нативное приложение для Windows на **C# / .NET 
 
 ## 1. Получить приложение (Windows 10/11, x64)
 
-1. Скачай `SLURP-Windows.zip` с сайта (кнопка «Скачать») или возьми папку `desktop/Slurp.Desktop`
+1. Скачай `SLURP-Windows-r2.zip` с сайта (кнопка «Скачать») или возьми папку `desktop/Slurp.Desktop`
    прямо из этого репозитория.
 2. Распакуй в любую папку, например `D:\SLURP`.
 3. Двойной клик по **`BUILD-WINDOWS.bat`**:
@@ -60,7 +60,7 @@ npm run build    # tsc --noEmit + vite build
 Пересборка того, что отдаётся на скачивание:
 
 ```bash
-npm run build:app   # → public/download/SLURP-Windows.zip (исходники + BUILD-WINDOWS.bat)
+npm run build:app   # → public/download/SLURP-Windows-r2.zip (исходники + BUILD-WINDOWS.bat)
 npm run build:win   # → public/download/SLURP.exe (нужен .NET SDK 8; на Windows)
 ```
 

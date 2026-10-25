@@ -48,5 +48,5 @@ Esc — остановить агента.
   npm run dev     → http://localhost:5173
 
 Пересобрать архив для скачивания:
-  npm run build:app        → public/download/SLURP-Windows.zip
+  npm run build:app        → public/download/SLURP-Windows-r2.zip
   npm run build:win        → public/download/SLURP.exe (нужен .NET SDK 8)
