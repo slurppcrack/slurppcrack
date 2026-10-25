@@ -135,7 +135,7 @@ export default function Download() {
                   <DownloadIcon size={16} /> Get {APP.file}
                 </a>
                 <a className="btn btn-ghost btn-lg" href={APP.zip} target="_blank" rel="noreferrer">
-                  Source ZIP
+                  Download ZIP (most reliable)
                 </a>
               </div>
             </div>
@@ -143,9 +143,11 @@ export default function Download() {
             <div className="note info" style={{ fontSize: 12.5 }}>
               <ExternalLink />
               <span>
-                GitHub opens the file in a viewer — press the <b>download icon</b> in its top-right corner (“Download raw
-                file”) to save it to disk. Then double-click the saved file. The ZIP route works the same way: unzip, then
-                open <span className="mono">release/SLURP.html</span>.
+                Easiest route: press <b>Download ZIP</b>, unzip it, and open{' '}
+                <span className="mono">release/SLURP.html</span> from inside. The single-file button opens a GitHub viewer —
+                press the <b>download icon</b> in its top-right corner (“Download raw file”) to save it, then double-click the
+                saved file. If that link hangs, your network may block <span className="mono">raw.githubusercontent.com</span>;
+                the ZIP comes from a different host and works.
               </span>
             </div>
 

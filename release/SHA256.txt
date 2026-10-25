@@ -1,4 +1,4 @@
-fb95e897df4eea85ecd652dde7bd1f5f88115aed4cd9958f98eca61d01da8a1e  SLURP.html
+ee157b98277893702023048167eea48c3a05158969cc9bbe0ddb118880ed8aaf  SLURP.html
 # SLURP 868 KB · built 2026-10-25
 # verify:  certutil -hashfile SLURP.html SHA256   (Windows)
 #          shasum -a 256 SLURP.html              (macOS / Linux)
