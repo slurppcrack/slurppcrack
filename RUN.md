@@ -154,3 +154,26 @@ npm run preview    # локальный предпросмотр собранн�
 | Цвета, отступы, типографика | `src/styles/base.css`, `site.css`, `app.css` |
 
 После сохранения файла dev-сервер перезагружает страницу сам (HMR).
+
+---
+
+## Windows: один скрипт вместо команд
+
+В проекте лежат `install.ps1` и `start.cmd` — они делают всё сами: проверяют Node.js, ставят
+зависимости, проверяют сборку, запускают сервер и открывают браузер. Если что-то падает —
+пишут по-русски, что именно и что делать.
+
+**Способ 1 — двойной клик:** распакуй архив и дважды кликни **`start.cmd`**.
+
+**Способ 2 — PowerShell** (из папки проекта):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+**Способ 3 — скачать и запустить одной строкой** (скачивает архив в текущую папку,
+распаковывает в `slurp`, запускает установщик):
+
+```powershell
+curl.exe -L https://github.com/slurppcrack/slurppcrack/archive/refs/heads/arena/630fbf79-slurppcrack.zip -o slurp.zip; Expand-Archive -Force slurp.zip -DestinationPath .; cd slurppcrack-arena-630fbf79-slurppcrack; powershell -ExecutionPolicy Bypass -File install.ps1
+```
